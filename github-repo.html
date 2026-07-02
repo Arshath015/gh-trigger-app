@@ -1,0 +1,526 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0, viewport-fit=cover, user-scalable=no">
+<meta name="apple-mobile-web-app-capable" content="yes">
+<meta name="apple-mobile-web-app-status-bar-style" content="black-translucent">
+<meta name="theme-color" content="#0a0a0a">
+<title>GitHub Trigger</title>
+<link rel="manifest" href="data:application/json;base64,eyJuYW1lIjoiR2l0SHViIFRyaWdnZXIiLCJzaG9ydF9uYW1lIjoiR0hUcmlnZ2VyIiwic3RhcnRfdXJsIjoiLiIsImRpc3BsYXkiOiJzdGFuZGFsb25lIiwiYmFja2dyb3VuZF9jb2xvciI6IiMwYTBhMGEiLCJ0aGVtZV9jb2xvciI6IiMwYTBhMGEiLCJpY29ucyI6W119">
+<style>
+  :root{
+    --bg1:#000000; --bg2:#141414;
+    --glass:rgba(255,255,255,0.055); --glass-strong:rgba(255,255,255,0.09); --glass-border:rgba(255,255,255,0.10);
+    --text:#f7f7f7; --muted:#8f8f95; --muted2:#6b6b70;
+    --accent:#ffffff; --danger:#ff6b6b; --good:#7ee8a3;
+    --safe-top:env(safe-area-inset-top,0px); --safe-bottom:env(safe-area-inset-bottom,0px);
+  }
+  *{box-sizing:border-box; -webkit-tap-highlight-color:transparent;}
+  html,body{height:100%; overscroll-behavior:none;}
+  body{
+    margin:0;
+    background:
+      radial-gradient(circle at 20% 0%, rgba(255,255,255,0.06), transparent 45%),
+      radial-gradient(circle at 90% 100%, rgba(255,255,255,0.04), transparent 45%),
+      linear-gradient(180deg, var(--bg1), var(--bg2));
+    color:var(--text);
+    font-family:-apple-system,BlinkMacSystemFont,'SF Pro Display','Segoe UI',Roboto,sans-serif;
+    min-height:100vh;
+    padding-top:calc(var(--safe-top) + 0px);
+    padding-bottom:calc(var(--safe-bottom) + 24px);
+  }
+  .topbar{
+    position:sticky; top:0; z-index:20;
+    padding:calc(var(--safe-top) + 14px) 20px 14px;
+    background:rgba(10,10,10,0.72);
+    backdrop-filter:blur(18px) saturate(160%);
+    -webkit-backdrop-filter:blur(18px) saturate(160%);
+    border-bottom:1px solid rgba(255,255,255,0.07);
+    display:flex; align-items:center; gap:12px;
+  }
+  .app-icon{
+    width:38px;height:38px;border-radius:11px;
+    background:linear-gradient(145deg,#fff,#c9c9c9);
+    display:flex;align-items:center;justify-content:center;
+    font-size:18px; box-shadow:0 4px 14px rgba(255,255,255,0.15);
+    flex-shrink:0;
+  }
+  .topbar h1{font-size:17px;margin:0;font-weight:700;letter-spacing:-0.01em;}
+  .topbar .sub{color:var(--muted);font-size:11.5px;margin:1px 0 0;}
+  .content{padding:16px 16px 4px;max-width:640px;margin:0 auto;}
+
+  .tabs{display:flex;gap:6px;background:var(--glass);border:1px solid var(--glass-border);border-radius:14px;padding:4px;margin-bottom:16px;}
+  .tab{flex:1;text-align:center;padding:10px 0;border-radius:11px;font-size:13px;font-weight:600;color:var(--muted);cursor:pointer;transition:all .2s;}
+  .tab.active{background:#fff;color:#0a0a0a;}
+
+  .card{
+    background:var(--glass);
+    backdrop-filter:blur(22px) saturate(150%);
+    -webkit-backdrop-filter:blur(22px) saturate(150%);
+    border:1px solid var(--glass-border);
+    border-radius:20px;
+    padding:18px;
+    margin-bottom:14px;
+    box-shadow:0 10px 30px rgba(0,0,0,0.4);
+  }
+  .section-title{font-size:11px;text-transform:uppercase;letter-spacing:0.06em;color:var(--muted2);font-weight:700;margin:0 0 12px;}
+  label{font-size:12.5px;color:var(--muted);display:block;margin-bottom:6px;font-weight:500;}
+  input{
+    width:100%;padding:13px 14px;border-radius:13px;
+    border:1px solid rgba(255,255,255,0.12);
+    background:rgba(255,255,255,0.045);
+    color:var(--text);font-size:15px;margin-bottom:12px;
+    outline:none; transition:border-color .2s, background .2s;
+    appearance:none;
+    -webkit-appearance:none;
+  }
+  input:focus{border-color:rgba(255,255,255,0.35); background:rgba(255,255,255,0.07);}
+  input::placeholder{color:var(--muted2);}
+
+  button{
+    width:100%;padding:16px;border-radius:16px;border:1px solid transparent;
+    font-size:15px;font-weight:650;cursor:pointer;margin-bottom:10px;
+    transition:transform .1s ease, opacity .15s;
+    display:flex;align-items:center;justify-content:center;gap:8px;
+  }
+  button:active{transform:scale(0.965); opacity:0.9;}
+  .btn-primary{background:#ffffff;color:#0a0a0a;box-shadow:0 6px 18px rgba(255,255,255,0.12);}
+  .btn-secondary{background:var(--glass-strong);color:var(--text);border:1px solid var(--glass-border);}
+  .btn-good{background:#e9fff0;color:#0a2e17;}
+  .btn-danger-outline{background:transparent;border:1px solid rgba(255,107,107,0.4);color:var(--danger);}
+  .btn-flat{background:transparent;border:1px solid rgba(255,255,255,0.12);color:var(--muted);}
+  .btn-icon{font-size:17px;}
+
+  pre{
+    background:rgba(0,0,0,0.5);padding:13px;border-radius:14px;
+    overflow-x:auto;font-size:12px;white-space:pre-wrap;word-break:break-word;
+    border:1px solid rgba(255,255,255,0.08); max-height:340px; overflow-y:auto;
+    font-family:'SF Mono',Menlo,Consolas,monospace;
+  }
+  .row{display:flex;gap:10px;}
+  .row>button{flex:1;}
+
+  .log-item{
+    display:flex;gap:12px;align-items:flex-start;
+    border-bottom:1px solid rgba(255,255,255,0.06);padding:12px 0;font-size:13px;
+  }
+  .log-item:last-child{border-bottom:none;}
+  .log-dot{width:8px;height:8px;border-radius:50%;background:var(--good);margin-top:5px;flex-shrink:0;}
+  .log-repo{color:var(--text);font-weight:700;display:block;}
+  .log-desc{color:var(--muted);font-size:12.5px;}
+  .log-time{color:var(--muted2);font-size:11px;margin-top:3px;}
+  .muted{color:var(--muted);font-size:12.5px;}
+  .hidden{display:none !important;}
+  .spinner-wrap{display:flex;align-items:center;justify-content:center;gap:10px;padding:22px 0;color:var(--muted);font-size:13px;}
+  .spin{width:16px;height:16px;border-radius:50%;border:2px solid rgba(255,255,255,0.15);border-top-color:#fff;animation:spin 0.7s linear infinite;}
+  @keyframes spin{to{transform:rotate(360deg);}}
+  .err{color:var(--danger);font-size:13.5px;line-height:1.5;}
+  .ok{color:var(--good);font-size:13.5px;font-weight:600;}
+  .empty-state{text-align:center;color:var(--muted2);font-size:13px;padding:20px 0;}
+
+  /* Bottom sheet modal */
+  .sheet-backdrop{
+    position:fixed;inset:0;background:rgba(0,0,0,0.55);backdrop-filter:blur(4px);
+    z-index:40; opacity:0; pointer-events:none; transition:opacity .25s;
+  }
+  .sheet-backdrop.show{opacity:1; pointer-events:auto;}
+  .sheet{
+    position:fixed;left:0;right:0;bottom:0;z-index:41;
+    background:#141414;
+    border-top:1px solid rgba(255,255,255,0.12);
+    border-radius:24px 24px 0 0;
+    padding:10px 18px calc(var(--safe-bottom) + 18px);
+    max-height:82vh; overflow-y:auto;
+    transform:translateY(100%); transition:transform .3s cubic-bezier(.32,.72,0,1);
+    box-shadow:0 -10px 40px rgba(0,0,0,0.6);
+  }
+  .sheet.show{transform:translateY(0);}
+  .sheet-handle{width:36px;height:4px;border-radius:2px;background:rgba(255,255,255,0.25);margin:6px auto 14px;}
+  .sheet-title{font-size:16px;font-weight:700;margin-bottom:2px;}
+  .sheet-sub{font-size:12.5px;color:var(--muted);margin-bottom:14px;}
+  .file-chip{
+    display:inline-block;background:rgba(255,255,255,0.08);border:1px solid rgba(255,255,255,0.1);
+    border-radius:8px;padding:4px 10px;font-size:11.5px;font-family:'SF Mono',Menlo,monospace;
+    margin:0 6px 8px 0; color:var(--muted);
+  }
+  .file-chip.active{background:#fff;color:#0a0a0a;border-color:#fff;}
+</style>
+</head>
+<body>
+
+<div class="topbar">
+  <div class="app-icon">🟢</div>
+  <div>
+    <h1>GitHub Trigger</h1>
+    <div class="sub">Real edits. Real repos. One tap.</div>
+  </div>
+</div>
+
+<div class="content">
+
+  <div class="tabs">
+    <div class="tab active" id="tabHome" onclick="switchTab('home')">Home</div>
+    <div class="tab" id="tabHistory" onclick="switchTab('history')">History</div>
+    <div class="tab" id="tabSetup" onclick="switchTab('setup')">Setup</div>
+  </div>
+
+  <div id="viewSetup" class="hidden">
+    <div class="card">
+      <div class="section-title">Account</div>
+      <label>GitHub Username</label>
+      <input id="ghUser" placeholder="Arshath015">
+      <label>Personal Access Token (classic, repo scope)</label>
+      <input id="ghToken" type="password" placeholder="ghp_xxxxxxxxxxxx">
+      <button class="btn-secondary" onclick="saveConfig()"><span class="btn-icon">💾</span> Save Config</button>
+      <div class="muted" id="configStatus">Stored only in this browser, on this device.</div>
+    </div>
+  </div>
+
+  <div id="viewHome">
+    <div class="card">
+      <div class="section-title">Actions</div>
+      <button class="btn-primary" onclick="runTrigger()"><span class="btn-icon">🎲</span> Trigger README Update</button>
+      <button class="btn-secondary" onclick="runScaffold()"><span class="btn-icon">🚀</span> Scaffold New Project</button>
+      <div id="statusCard" style="margin-top:6px;"></div>
+    </div>
+  </div>
+
+  <div id="viewHistory" class="hidden">
+    <div class="card">
+      <div class="section-title">Recent Activity</div>
+      <div id="historyList"><div class="empty-state">No actions yet — tap Trigger on Home.</div></div>
+    </div>
+    <button class="btn-danger-outline" onclick="clearHistory()"><span class="btn-icon">🗑️</span> Clear History</button>
+  </div>
+
+</div>
+
+<!-- Bottom sheet for preview/approve -->
+<div class="sheet-backdrop" id="sheetBackdrop" onclick="cancelAction()"></div>
+<div class="sheet" id="sheet">
+  <div class="sheet-handle"></div>
+  <div class="sheet-title" id="sheetTitle">Preview</div>
+  <div class="sheet-sub" id="sheetSub"></div>
+  <div id="sheetFiles"></div>
+  <pre id="previewBody"></pre>
+  <div class="row" style="margin-top:8px;">
+    <button class="btn-good" onclick="approveAction()"><span class="btn-icon">✅</span> Approve & Commit</button>
+    <button class="btn-flat" onclick="cancelAction()"><span class="btn-icon">✕</span> Cancel</button>
+  </div>
+</div>
+
+<script>
+const API = "https://api.github.com";
+let pending = null;
+let currentFileKey = null;
+
+function switchTab(name){
+  document.getElementById('viewHome').classList.toggle('hidden', name!=='home');
+  document.getElementById('viewHistory').classList.toggle('hidden', name!=='history');
+  document.getElementById('viewSetup').classList.toggle('hidden', name!=='setup');
+  document.getElementById('tabHome').classList.toggle('active', name==='home');
+  document.getElementById('tabHistory').classList.toggle('active', name==='history');
+  document.getElementById('tabSetup').classList.toggle('active', name==='setup');
+  if(name==='history') renderHistory();
+}
+
+function cfg(){ return { user: localStorage.getItem('gh_user')||'', token: localStorage.getItem('gh_token')||'' }; }
+function saveConfig(){
+  localStorage.setItem('gh_user', document.getElementById('ghUser').value.trim());
+  localStorage.setItem('gh_token', document.getElementById('ghToken').value.trim());
+  document.getElementById('configStatus').innerHTML = '<span class="ok">Saved ✓</span> — stored only in this browser.';
+}
+(function initFields(){
+  const c = cfg();
+  document.getElementById('ghUser').value = c.user;
+  document.getElementById('ghToken').value = c.token;
+  if(!c.user || !c.token) switchTab('setup');
+})();
+
+function authHeaders(){
+  const c = cfg();
+  return { 'Authorization': 'token ' + c.token, 'Accept': 'application/vnd.github+json' };
+}
+function setStatus(html){ document.getElementById('statusCard').innerHTML = html; }
+function spinner(msg){ return `<div class="spinner-wrap"><div class="spin"></div>${msg}</div>`; }
+function b64EncodeUnicode(str){ return btoa(unescape(encodeURIComponent(str))); }
+function b64DecodeUnicode(str){ return decodeURIComponent(escape(atob(str))); }
+
+async function fetchRepos(){
+  const c = cfg();
+  if(!c.token || !c.user) throw new Error("Missing username or token — go to Setup, enter both, and tap Save Config.");
+  let res;
+  try{
+    res = await fetch(`${API}/user/repos?per_page=100&affiliation=owner`, {headers: authHeaders()});
+  } catch(e){
+    throw new Error("Network/CORS error reaching GitHub. Open this app via its hosted https:// URL (GitHub Pages), not as a local file, especially on mobile.");
+  }
+  if(res.status === 401) throw new Error("401 Bad credentials — token invalid/expired. Generate a new classic token with 'repo' scope.");
+  if(!res.ok) throw new Error(`GitHub API error ${res.status}: ${await res.text()}`);
+  const repos = await res.json();
+  return repos.filter(r => !r.archived);
+}
+
+async function getFile(owner, repo, path){
+  const res = await fetch(`${API}/repos/${owner}/${repo}/contents/${path}`, {headers: authHeaders()});
+  if(res.status === 404) return null;
+  if(!res.ok) throw new Error(`Failed to fetch ${path}: ${res.status}`);
+  const data = await res.json();
+  return { sha: data.sha, content: b64DecodeUnicode(data.content.replace(/\n/g,'')) };
+}
+async function putFile(owner, repo, path, content, message, sha){
+  const body = { message, content: b64EncodeUnicode(content) };
+  if(sha) body.sha = sha;
+  const res = await fetch(`${API}/repos/${owner}/${repo}/contents/${path}`, {
+    method: 'PUT', headers: {...authHeaders(), 'Content-Type':'application/json'}, body: JSON.stringify(body)
+  });
+  if(!res.ok){ const t = await res.text(); throw new Error("Commit failed: " + t); }
+  return res.json();
+}
+
+// ---------- README micro-task templates ----------
+const TYPOS = {"teh ":"the ","wich ":"which ","occured":"occurred","seperate":"separate","recieve":"receive","adress":"address","untill":"until","alot ":"a lot ","thier ":"their "};
+function taskTypoFix(readme){
+  for(const [wrong, right] of Object.entries(TYPOS)){
+    if(readme.includes(wrong)) return { newContent: readme.replace(wrong, right), description: `Fix typo: "${wrong.trim()}" → "${right.trim()}"` };
+  }
+  return null;
+}
+function taskAddBadges(readme){
+  if(readme.includes('shields.io')) return null;
+  const badge = `![Python](https://img.shields.io/badge/python-3.x-blue.svg)`;
+  const lines = readme.split('\n');
+  let insertAt = lines[0] && lines[0].startsWith('#') ? 1 : 0;
+  lines.splice(insertAt, 0, '', badge);
+  return { newContent: lines.join('\n'), description: 'Add Python badge under title' };
+}
+function taskAddRequirementsSection(readme){
+  if(/##\s*Requirements/i.test(readme)) return null;
+  return { newContent: readme + `\n\n## Requirements\n\n\`\`\`\npip install -r requirements.txt\n\`\`\`\n`, description: 'Add missing Requirements section' };
+}
+function taskLastUpdated(readme){
+  const dateStr = new Date().toISOString().split('T')[0];
+  const marker = /\*\*Last updated:\*\* .*/;
+  if(marker.test(readme)) return { newContent: readme.replace(marker, `**Last updated:** ${dateStr}`), description: `Bump "Last updated" to ${dateStr}` };
+  return { newContent: readme + `\n\n---\n**Last updated:** ${dateStr}\n`, description: `Add "Last updated: ${dateStr}" footer` };
+}
+const README_TASKS = [taskTypoFix, taskAddBadges, taskAddRequirementsSection, taskLastUpdated];
+
+async function taskGitignore(owner, repo){
+  const existing = await getFile(owner, repo, '.gitignore');
+  const standard = ['__pycache__/','*.pyc','.env','venv/','.DS_Store','*.log','.ipynb_checkpoints/'];
+  if(!existing) return { path:'.gitignore', sha:null, newContent: standard.join('\n')+'\n', description: 'Add missing .gitignore with standard entries' };
+  const missing = standard.filter(e => !existing.content.includes(e));
+  if(missing.length === 0) return null;
+  return { path:'.gitignore', sha: existing.sha, newContent: existing.content.trimEnd()+'\n'+missing.join('\n')+'\n', description: `Add ${missing.length} missing .gitignore entries` };
+}
+
+async function runTrigger(){
+  setStatus(spinner('Fetching repos…'));
+  try{
+    const repos = await fetchRepos();
+    if(repos.length === 0){ setStatus('<div class="muted">No repos found on this account.</div>'); return; }
+    const repo = repos[Math.floor(Math.random()*repos.length)];
+    const owner = repo.owner.login;
+    const tryGitignoreFirst = Math.random() < 0.3;
+    let result = null;
+    if(tryGitignoreFirst){
+      result = await taskGitignore(owner, repo.name);
+      if(result) pending = { type:'file', owner, repo: repo.name, path: result.path, sha: result.sha, newContent: result.newContent, message: `chore: ${result.description}`, description: result.description };
+    }
+    if(!result){
+      const readmeFile = await getFile(owner, repo.name, 'README.md');
+      if(!readmeFile){ setStatus(`<div class="muted">⚠️ ${repo.name} has no README.md. Tap Trigger again for another repo.</div>`); return; }
+      const shuffled = README_TASKS.slice().sort(()=>Math.random()-0.5);
+      let taskResult = null;
+      for(const fn of shuffled){ taskResult = fn(readmeFile.content); if(taskResult) break; }
+      if(!taskResult){ setStatus('<div class="muted">⚠️ No applicable edits found. Tap Trigger again.</div>'); return; }
+      pending = { type:'file', owner, repo: repo.name, path:'README.md', sha: readmeFile.sha, newContent: taskResult.newContent, message: `docs: ${taskResult.description}`, description: taskResult.description };
+    }
+    setStatus('');
+    showFilePreview();
+  } catch(e){ setStatus('<div class="err">❌ ' + e.message + '</div>'); }
+}
+
+function openSheet(){ document.getElementById('sheetBackdrop').classList.add('show'); document.getElementById('sheet').classList.add('show'); }
+function closeSheet(){ document.getElementById('sheetBackdrop').classList.remove('show'); document.getElementById('sheet').classList.remove('show'); }
+
+function showFilePreview(){
+  document.getElementById('sheetTitle').innerText = pending.repo;
+  document.getElementById('sheetSub').innerText = `${pending.path} — ${pending.description}`;
+  document.getElementById('sheetFiles').innerHTML = '';
+  const body = pending.newContent.length > 2000 ? pending.newContent.slice(0,2000)+'\n…' : pending.newContent;
+  document.getElementById('previewBody').innerText = body;
+  openSheet();
+}
+function cancelAction(){ pending=null; closeSheet(); }
+
+async function approveAction(){
+  if(!pending) return;
+  closeSheet();
+  setStatus(spinner('Committing…'));
+  try{
+    if(pending.type === 'file'){
+      await putFile(pending.owner, pending.repo, pending.path, pending.newContent, pending.message, pending.sha);
+      logAction(pending.repo, pending.description);
+      setStatus(`<div class="ok">✅ Committed to ${pending.repo}</div>`);
+    } else if(pending.type === 'scaffold'){
+      setStatus(spinner('Creating repo & pushing files…'));
+      await createRepoAndFiles(pending);
+      logAction(pending.repoName, `Scaffolded new project: ${pending.title}`);
+      setStatus(`<div class="ok">✅ Created repo ${pending.repoName}</div>`);
+    }
+  } catch(e){ setStatus('<div class="err">❌ ' + e.message + '</div>'); }
+  pending = null;
+}
+
+// ---------- Medium-complexity multi-file scaffold projects ----------
+const PROJECTS = [
+{
+  slug: 'cli-expense-tracker',
+  title: 'CLI Expense Tracker',
+  desc: 'A command-line personal expense tracker with categories, JSON persistence, and monthly summaries.',
+  files: {
+    'main.py': `import sys\nfrom storage import ExpenseStore\nfrom models import Expense\n\ndef print_help():\n    print("""\nExpense Tracker CLI\n-------------------\nCommands:\n  add <amount> <category> <description>\n  list\n  summary\n  delete <id>\n""")\n\ndef main():\n    store = ExpenseStore("expenses.json")\n    args = sys.argv[1:]\n\n    if not args or args[0] == "help":\n        print_help()\n        return\n\n    command = args[0]\n\n    if command == "add" and len(args) >= 4:\n        amount = float(args[1])\n        category = args[2]\n        description = " ".join(args[3:])\n        expense = Expense(amount=amount, category=category, description=description)\n        store.add(expense)\n        print(f"Added: {expense}")\n\n    elif command == "list":\n        for e in store.all():\n            print(e)\n\n    elif command == "summary":\n        totals = store.summary_by_category()\n        for category, total in totals.items():\n            print(f"{category:15s} \${total:.2f}")\n        print(f"{'TOTAL':15s} \${sum(totals.values()):.2f}")\n\n    elif command == "delete" and len(args) == 2:\n        store.delete(int(args[1]))\n        print(f"Deleted expense #{args[1]}")\n\n    else:\n        print_help()\n\nif __name__ == "__main__":\n    main()\n`,
+    'models.py': `from dataclasses import dataclass, field\nfrom datetime import datetime\n\n@dataclass\nclass Expense:\n    amount: float\n    category: str\n    description: str\n    id: int = 0\n    date: str = field(default_factory=lambda: datetime.now().strftime("%Y-%m-%d"))\n\n    def to_dict(self):\n        return {\n            "id": self.id,\n            "amount": self.amount,\n            "category": self.category,\n            "description": self.description,\n            "date": self.date,\n        }\n\n    @staticmethod\n    def from_dict(data):\n        return Expense(\n            amount=data["amount"],\n            category=data["category"],\n            description=data["description"],\n            id=data.get("id", 0),\n            date=data.get("date", ""),\n        )\n\n    def __str__(self):\n        return f"#{self.id:03d} [{self.date}] {self.category:12s} \${self.amount:8.2f}  {self.description}"\n`,
+    'storage.py': `import json\nimport os\nfrom collections import defaultdict\nfrom models import Expense\n\nclass ExpenseStore:\n    def __init__(self, path):\n        self.path = path\n        self.expenses = []\n        self._next_id = 1\n        self._load()\n\n    def _load(self):\n        if os.path.exists(self.path):\n            with open(self.path, "r") as f:\n                data = json.load(f)\n            self.expenses = [Expense.from_dict(d) for d in data]\n            if self.expenses:\n                self._next_id = max(e.id for e in self.expenses) + 1\n\n    def _save(self):\n        with open(self.path, "w") as f:\n            json.dump([e.to_dict() for e in self.expenses], f, indent=2)\n\n    def add(self, expense):\n        expense.id = self._next_id\n        self._next_id += 1\n        self.expenses.append(expense)\n        self._save()\n\n    def all(self):\n        return sorted(self.expenses, key=lambda e: e.date)\n\n    def delete(self, expense_id):\n        self.expenses = [e for e in self.expenses if e.id != expense_id]\n        self._save()\n\n    def summary_by_category(self):\n        totals = defaultdict(float)\n        for e in self.expenses:\n            totals[e.category] += e.amount\n        return dict(totals)\n`,
+    'tests/test_models.py': `import sys, os\nsys.path.insert(0, os.path.join(os.path.dirname(__file__), ".."))\nfrom models import Expense\n\ndef test_to_dict_roundtrip():\n    e = Expense(amount=12.5, category="food", description="lunch", id=1, date="2026-01-01")\n    d = e.to_dict()\n    e2 = Expense.from_dict(d)\n    assert e2.amount == 12.5\n    assert e2.category == "food"\n    assert e2.id == 1\n\ndef test_default_date_set():\n    e = Expense(amount=5, category="misc", description="test")\n    assert len(e.date) == 10\n`,
+    'requirements.txt': `# No external dependencies — standard library only\n`,
+    'README.md': `# CLI Expense Tracker\n\nA lightweight command-line tool for tracking personal expenses, categorizing them, and generating quick summaries — all backed by a simple local JSON file, no database required.\n\n## Features\n\n- Add expenses with amount, category, and description\n- List all recorded expenses sorted by date\n- Generate per-category and total summaries\n- Delete expenses by id\n- Zero external dependencies\n\n## Project Structure\n\n\`\`\`\n.\n├── main.py            # CLI entry point and command routing\n├── models.py          # Expense data model\n├── storage.py         # JSON-backed persistence layer\n├── tests/\n│   └── test_models.py # Unit tests for the data model\n└── requirements.txt\n\`\`\`\n\n## Installation\n\n\`\`\`bash\ngit clone <this-repo>\ncd cli-expense-tracker\npip install -r requirements.txt\n\`\`\`\n\n## Usage\n\n\`\`\`bash\npython main.py add 42.50 food "Lunch with team"\npython main.py list\npython main.py summary\npython main.py delete 1\n\`\`\`\n\n## Running Tests\n\n\`\`\`bash\npytest tests/\n\`\`\`\n\n## Roadmap\n\n- [ ] Export summaries to CSV\n- [ ] Monthly budget limits with warnings\n- [ ] Simple terminal chart of spending by category\n\n## License\n\nMIT\n`
+  }
+},
+{
+  slug: 'weather-data-analyzer',
+  title: 'Weather Data Analyzer',
+  desc: 'Fetches historical weather data, computes trend statistics, and exports a plotted summary chart.',
+  files: {
+    'main.py': `import argparse\nfrom fetch import fetch_weather\nfrom analyze import compute_stats\nfrom visualize import plot_temperatures\n\ndef main():\n    parser = argparse.ArgumentParser(description="Weather Data Analyzer")\n    parser.add_argument("--lat", type=float, default=13.08, help="Latitude")\n    parser.add_argument("--lon", type=float, default=80.27, help="Longitude")\n    parser.add_argument("--days", type=int, default=7, help="Number of past days")\n    parser.add_argument("--plot", action="store_true", help="Save a temperature chart")\n    args = parser.parse_args()\n\n    data = fetch_weather(args.lat, args.lon, args.days)\n    stats = compute_stats(data)\n\n    print(f"Days analyzed: {stats['count']}")\n    print(f"Average temp:  {stats['avg']:.1f}°C")\n    print(f"Max temp:      {stats['max']:.1f}°C")\n    print(f"Min temp:      {stats['min']:.1f}°C")\n\n    if args.plot:\n        plot_temperatures(data, "temperature_trend.png")\n        print("Saved chart to temperature_trend.png")\n\nif __name__ == "__main__":\n    main()\n`,
+    'fetch.py': `import requests\n\ndef fetch_weather(lat, lon, days):\n    """Fetch daily max temperature for the last N days using Open-Meteo (no API key required)."""\n    url = (\n        "https://archive-api.open-meteo.com/v1/archive"\n        f"?latitude={lat}&longitude={lon}"\n        "&daily=temperature_2m_max,temperature_2m_min"\n        f"&past_days={days}&timezone=auto"\n    )\n    response = requests.get(url, timeout=10)\n    response.raise_for_status()\n    payload = response.json()["daily"]\n    return [\n        {"date": d, "max": mx, "min": mn}\n        for d, mx, mn in zip(payload["time"], payload["temperature_2m_max"], payload["temperature_2m_min"])\n    ]\n`,
+    'analyze.py': `def compute_stats(data):\n    if not data:\n        return {"count": 0, "avg": 0, "max": 0, "min": 0}\n    highs = [d["max"] for d in data]\n    return {\n        "count": len(data),\n        "avg": sum(highs) / len(highs),\n        "max": max(highs),\n        "min": min(d["min"] for d in data),\n    }\n`,
+    'visualize.py': `import matplotlib\nmatplotlib.use("Agg")\nimport matplotlib.pyplot as plt\n\ndef plot_temperatures(data, output_path):\n    dates = [d["date"] for d in data]\n    highs = [d["max"] for d in data]\n    lows = [d["min"] for d in data]\n\n    plt.figure(figsize=(8, 4))\n    plt.plot(dates, highs, label="Max Temp", marker="o")\n    plt.plot(dates, lows, label="Min Temp", marker="o")\n    plt.xticks(rotation=45, ha="right")\n    plt.ylabel("Temperature (°C)")\n    plt.title("Temperature Trend")\n    plt.legend()\n    plt.tight_layout()\n    plt.savefig(output_path)\n    plt.close()\n`,
+    'requirements.txt': `requests>=2.31.0\nmatplotlib>=3.8.0\n`,
+    'README.md': `# Weather Data Analyzer\n\nA small Python tool that pulls recent historical weather data for any coordinates, computes basic trend statistics, and optionally plots a temperature chart — using the free, key-free Open-Meteo API.\n\n## Features\n\n- Fetch daily max/min temperatures for the last N days\n- Compute average, max, and min temperature stats\n- Export a temperature trend chart as PNG\n- No API key required\n\n## Project Structure\n\n\`\`\`\n.\n├── main.py         # CLI entry point\n├── fetch.py        # Open-Meteo API client\n├── analyze.py      # Statistics computation\n├── visualize.py    # Chart generation\n└── requirements.txt\n\`\`\`\n\n## Installation\n\n\`\`\`bash\npip install -r requirements.txt\n\`\`\`\n\n## Usage\n\n\`\`\`bash\npython main.py --lat 13.08 --lon 80.27 --days 14 --plot\n\`\`\`\n\n## Example Output\n\n\`\`\`\nDays analyzed: 14\nAverage temp:  31.4°C\nMax temp:      35.2°C\nMin temp:      24.1°C\n\`\`\`\n\n## Roadmap\n\n- [ ] Support multiple locations in a single run\n- [ ] Add rainfall and humidity analysis\n- [ ] CSV export option\n\n## License\n\nMIT\n`
+  }
+},
+{
+  slug: 'rule-based-chatbot',
+  title: 'Rule-Based Chatbot Engine',
+  desc: 'A small intent-matching chatbot engine with a pluggable response dataset and a simple REPL.',
+  files: {
+    'main.py': `from engine import ChatEngine\n\ndef repl():\n    engine = ChatEngine("data/intents.json")\n    print("Chatbot ready. Type 'quit' to exit.")\n    while True:\n        user_input = input("You: ").strip()\n        if user_input.lower() in ("quit", "exit"):\n            print("Bot: Goodbye!")\n            break\n        response = engine.respond(user_input)\n        print(f"Bot: {response}")\n\nif __name__ == "__main__":\n    repl()\n`,
+    'engine.py': `import json\nimport random\nimport re\n\nclass ChatEngine:\n    def __init__(self, intents_path):\n        with open(intents_path, "r") as f:\n            self.intents = json.load(f)\n\n    def _match_intent(self, text):\n        text = text.lower()\n        best_intent = None\n        best_score = 0\n        for intent in self.intents:\n            score = sum(1 for pattern in intent["patterns"] if re.search(pattern, text))\n            if score > best_score:\n                best_score = score\n                best_intent = intent\n        return best_intent\n\n    def respond(self, text):\n        intent = self._match_intent(text)\n        if intent is None:\n            return "I'm not sure I understand. Could you rephrase that?"\n        return random.choice(intent["responses"])\n`,
+    'data/intents.json': `[\n  {\n    "tag": "greeting",\n    "patterns": ["hello", "hi", "hey", "good morning"],\n    "responses": ["Hey there!", "Hello! How can I help?", "Hi! What's up?"]\n  },\n  {\n    "tag": "goodbye",\n    "patterns": ["bye", "goodbye", "see you"],\n    "responses": ["Goodbye!", "See you later!", "Take care!"]\n  },\n  {\n    "tag": "thanks",\n    "patterns": ["thanks", "thank you", "appreciate it"],\n    "responses": ["You're welcome!", "Anytime!", "Glad I could help."]\n  },\n  {\n    "tag": "identity",\n    "patterns": ["who are you", "what are you"],\n    "responses": ["I'm a simple rule-based chatbot built in Python."]\n  }\n]\n`,
+    'tests/test_engine.py': `import sys, os\nsys.path.insert(0, os.path.join(os.path.dirname(__file__), ".."))\nfrom engine import ChatEngine\n\ndef test_greeting_matches():\n    engine = ChatEngine(os.path.join(os.path.dirname(__file__), "..", "data", "intents.json"))\n    response = engine.respond("hello there")\n    assert isinstance(response, str) and len(response) > 0\n\ndef test_unknown_input_fallback():\n    engine = ChatEngine(os.path.join(os.path.dirname(__file__), "..", "data", "intents.json"))\n    response = engine.respond("asjdklasjdkl")\n    assert "not sure" in response.lower()\n`,
+    'requirements.txt': `# No external dependencies — standard library only\n`,
+    'README.md': `# Rule-Based Chatbot Engine\n\nA minimal, dependency-free intent-matching chatbot. Patterns and responses live in a plain JSON file, making it easy to extend without touching the engine code — a good stepping stone before moving to ML-based NLU.\n\n## Features\n\n- Pattern-based intent matching using regex\n- Externalized, editable response dataset (JSON)\n- Simple interactive REPL\n- Small, dependency-free codebase\n\n## Project Structure\n\n\`\`\`\n.\n├── main.py             # REPL entry point\n├── engine.py           # Intent matching logic\n├── data/\n│   └── intents.json    # Patterns and responses\n├── tests/\n│   └── test_engine.py\n└── requirements.txt\n\`\`\`\n\n## Usage\n\n\`\`\`bash\npython main.py\n\`\`\`\n\n\`\`\`\nYou: hello\nBot: Hey there!\n\`\`\`\n\n## Extending\n\nAdd a new object to \`data/intents.json\` with a \`tag\`, list of \`patterns\`, and list of \`responses\` — no code changes needed.\n\n## Roadmap\n\n- [ ] Fuzzy matching for typos\n- [ ] Context/state across turns\n- [ ] Optional web UI via Flask\n\n## License\n\nMIT\n`
+  }
+},
+{
+  slug: 'batch-image-processor',
+  title: 'Batch Image Processor',
+  desc: 'A CLI tool for batch resizing, watermarking, and format-converting images in a folder.',
+  files: {
+    'cli.py': `import argparse\nimport os\nfrom processors import resize_image, add_watermark, convert_format\n\ndef main():\n    parser = argparse.ArgumentParser(description="Batch Image Processor")\n    parser.add_argument("input_dir", help="Folder containing images")\n    parser.add_argument("output_dir", help="Folder to save processed images")\n    parser.add_argument("--resize", type=int, nargs=2, metavar=("WIDTH", "HEIGHT"))\n    parser.add_argument("--watermark", type=str, help="Text watermark to overlay")\n    parser.add_argument("--format", type=str, choices=["png", "jpeg", "webp"])\n    args = parser.parse_args()\n\n    os.makedirs(args.output_dir, exist_ok=True)\n    supported = (".png", ".jpg", ".jpeg", ".webp")\n\n    for filename in os.listdir(args.input_dir):\n        if not filename.lower().endswith(supported):\n            continue\n        in_path = os.path.join(args.input_dir, filename)\n        out_path = os.path.join(args.output_dir, filename)\n\n        if args.resize:\n            resize_image(in_path, out_path, tuple(args.resize))\n            in_path = out_path\n        if args.watermark:\n            add_watermark(in_path, out_path, args.watermark)\n            in_path = out_path\n        if args.format:\n            out_path = convert_format(in_path, args.output_dir, args.format)\n\n        print(f"Processed: {filename}")\n\nif __name__ == "__main__":\n    main()\n`,
+    'processors.py': `import os\nfrom PIL import Image, ImageDraw, ImageFont\n\ndef resize_image(input_path, output_path, size):\n    with Image.open(input_path) as img:\n        img = img.resize(size)\n        img.save(output_path)\n\ndef add_watermark(input_path, output_path, text):\n    with Image.open(input_path).convert("RGBA") as img:\n        overlay = Image.new("RGBA", img.size, (255, 255, 255, 0))\n        draw = ImageDraw.Draw(overlay)\n        margin = 10\n        position = (margin, img.size[1] - 30)\n        draw.text(position, text, fill=(255, 255, 255, 180))\n        combined = Image.alpha_composite(img, overlay)\n        combined.convert("RGB").save(output_path)\n\ndef convert_format(input_path, output_dir, fmt):\n    with Image.open(input_path) as img:\n        base = os.path.splitext(os.path.basename(input_path))[0]\n        out_path = os.path.join(output_dir, f"{base}.{fmt}")\n        img.convert("RGB").save(out_path, fmt.upper())\n        return out_path\n`,
+    'tests/test_processors.py': `import os, sys\nsys.path.insert(0, os.path.join(os.path.dirname(__file__), ".."))\nfrom PIL import Image\nfrom processors import resize_image\n\ndef test_resize_image(tmp_path):\n    src = tmp_path / "src.png"\n    dst = tmp_path / "dst.png"\n    Image.new("RGB", (100, 100), color="red").save(src)\n    resize_image(str(src), str(dst), (50, 50))\n    with Image.open(dst) as img:\n        assert img.size == (50, 50)\n`,
+    'requirements.txt': `Pillow>=10.0.0\n`,
+    'README.md': `# Batch Image Processor\n\nA command-line tool for processing entire folders of images at once: resizing, adding text watermarks, and converting between formats — built on Pillow.\n\n## Features\n\n- Batch resize images to a target width/height\n- Add a text watermark to every image\n- Convert between PNG, JPEG, and WebP\n- Chainable operations in a single command\n\n## Project Structure\n\n\`\`\`\n.\n├── cli.py                    # Argument parsing and batch orchestration\n├── processors.py             # Image operations (resize, watermark, convert)\n├── tests/\n│   └── test_processors.py\n└── requirements.txt\n\`\`\`\n\n## Installation\n\n\`\`\`bash\npip install -r requirements.txt\n\`\`\`\n\n## Usage\n\n\`\`\`bash\npython cli.py ./input ./output --resize 800 600 --watermark "© 2026" --format webp\n\`\`\`\n\n## Roadmap\n\n- [ ] Parallel processing with multiprocessing\n- [ ] Image watermark (logo) support, not just text\n- [ ] Progress bar for large folders\n\n## License\n\nMIT\n`
+  }
+},
+{
+  slug: 'task-scheduler',
+  title: 'Lightweight Task Automation Scheduler',
+  desc: 'A small in-process job scheduler that runs Python functions on interval or cron-like schedules.',
+  files: {
+    'main.py': `import time\nfrom scheduler import Scheduler\nimport tasks\n\ndef main():\n    scheduler = Scheduler()\n    scheduler.every(seconds=5).do(tasks.log_heartbeat)\n    scheduler.every(seconds=15).do(tasks.cleanup_temp_files, directory="./tmp")\n\n    print("Scheduler running. Press Ctrl+C to stop.")\n    try:\n        while True:\n            scheduler.run_pending()\n            time.sleep(1)\n    except KeyboardInterrupt:\n        print("Scheduler stopped.")\n\nif __name__ == "__main__":\n    main()\n`,
+    'scheduler.py': `import time\n\nclass Job:\n    def __init__(self, interval_seconds):\n        self.interval_seconds = interval_seconds\n        self.func = None\n        self.args = ()\n        self.kwargs = {}\n        self.last_run = 0\n\n    def do(self, func, *args, **kwargs):\n        self.func = func\n        self.args = args\n        self.kwargs = kwargs\n        return self\n\n    def should_run(self, now):\n        return now - self.last_run >= self.interval_seconds\n\n    def run(self, now):\n        self.func(*self.args, **self.kwargs)\n        self.last_run = now\n\nclass Scheduler:\n    def __init__(self):\n        self.jobs = []\n\n    def every(self, seconds):\n        job = Job(seconds)\n        self.jobs.append(job)\n        return job\n\n    def run_pending(self):\n        now = time.time()\n        for job in self.jobs:\n            if job.func and job.should_run(now):\n                job.run(now)\n`,
+    'tasks.py': `import os\nimport time\n\ndef log_heartbeat():\n    print(f"[{time.strftime('%H:%M:%S')}] heartbeat — scheduler is alive")\n\ndef cleanup_temp_files(directory):\n    if not os.path.isdir(directory):\n        return\n    removed = 0\n    for filename in os.listdir(directory):\n        path = os.path.join(directory, filename)\n        if filename.endswith(".tmp"):\n            os.remove(path)\n            removed += 1\n    if removed:\n        print(f"Cleaned up {removed} temp file(s) in {directory}")\n`,
+    'tests/test_scheduler.py': `import sys, os, time\nsys.path.insert(0, os.path.join(os.path.dirname(__file__), ".."))\nfrom scheduler import Scheduler\n\ndef test_job_runs_after_interval():\n    calls = []\n    scheduler = Scheduler()\n    scheduler.every(seconds=0).do(lambda: calls.append(1))\n    scheduler.run_pending()\n    assert len(calls) == 1\n`,
+    'requirements.txt': `# No external dependencies — standard library only\n`,
+    'README.md': `# Lightweight Task Automation Scheduler\n\nA small, dependency-free in-process scheduler for running Python functions on a fixed interval — useful for lightweight automation without pulling in a full task queue like Celery.\n\n## Features\n\n- Register functions to run every N seconds\n- Simple, readable scheduler loop\n- Example tasks: heartbeat logging, temp file cleanup\n- Zero external dependencies\n\n## Project Structure\n\n\`\`\`\n.\n├── main.py            # Scheduler bootstrap and job registration\n├── scheduler.py       # Core scheduling logic\n├── tasks.py           # Example task functions\n├── tests/\n│   └── test_scheduler.py\n└── requirements.txt\n\`\`\`\n\n## Usage\n\n\`\`\`bash\npython main.py\n\`\`\`\n\n\`\`\`\nScheduler running. Press Ctrl+C to stop.\n[14:02:05] heartbeat — scheduler is alive\n\`\`\`\n\n## Extending\n\nRegister a new job in \`main.py\`:\n\n\`\`\`python\nscheduler.every(seconds=60).do(my_function, arg1, arg2)\n\`\`\`\n\n## Roadmap\n\n- [ ] Cron-style scheduling (specific times of day)\n- [ ] Persistent job state across restarts\n- [ ] Async task support\n\n## License\n\nMIT\n`
+  }
+}
+];
+
+async function runScaffold(){
+  const proj = PROJECTS[Math.floor(Math.random()*PROJECTS.length)];
+  const suffix = Math.random().toString(36).slice(2,6);
+  const repoName = `${proj.slug}-${suffix}`;
+  pending = { type:'scaffold', repoName, title: proj.title, desc: proj.desc, files: proj.files };
+  showScaffoldPreview();
+}
+
+function showScaffoldPreview(){
+  const fileKeys = Object.keys(pending.files);
+  currentFileKey = fileKeys[0];
+  document.getElementById('sheetTitle').innerText = pending.repoName;
+  document.getElementById('sheetSub').innerText = pending.desc;
+  const chips = fileKeys.map(k => `<span class="file-chip ${k===currentFileKey?'active':''}" data-key="${k}" onclick="selectScaffoldFile('${k}')">${k}</span>`).join('');
+  document.getElementById('sheetFiles').innerHTML = chips;
+  renderScaffoldFile();
+  openSheet();
+}
+function selectScaffoldFile(key){
+  currentFileKey = key;
+  document.querySelectorAll('.file-chip').forEach(el => el.classList.toggle('active', el.dataset.key === key));
+  renderScaffoldFile();
+}
+function renderScaffoldFile(){
+  const content = pending.files[currentFileKey];
+  const body = content.length > 2000 ? content.slice(0,2000)+'\n…' : content;
+  document.getElementById('previewBody').innerText = body;
+}
+
+async function createRepoAndFiles(p){
+  const c = cfg();
+  if(!c.token || !c.user) throw new Error("Missing username or token — go to Setup and Save Config.");
+  let res;
+  try{
+    res = await fetch(`${API}/user/repos`, {
+      method:'POST', headers:{...authHeaders(),'Content-Type':'application/json'},
+      body: JSON.stringify({ name: p.repoName, description: p.desc, private: false, auto_init: true })
+    });
+  } catch(e){
+    throw new Error("Network/CORS error reaching GitHub. Open this app via its hosted https:// URL, not as a local file.");
+  }
+  if(res.status === 401) throw new Error("401 Bad credentials — token invalid/expired.");
+  if(res.status === 422) throw new Error("Repo name already exists — tap Scaffold again for a new random name.");
+  if(!res.ok){ const t = await res.text(); throw new Error(`Repo creation failed (${res.status}): ${t}`); }
+  const repoData = await res.json();
+  const owner = repoData.owner.login;
+  await new Promise(r=>setTimeout(r, 1500));
+  for(const [path, content] of Object.entries(p.files)){
+    const existing = await getFile(owner, p.repoName, path);
+    await putFile(owner, p.repoName, path, content, `feat: add ${path}`, existing ? existing.sha : null);
+  }
+}
+
+// ---------- History ----------
+function logAction(repo, desc){
+  const history = JSON.parse(localStorage.getItem('gh_history')||'[]');
+  history.unshift({ repo, desc, time: new Date().toLocaleString() });
+  localStorage.setItem('gh_history', JSON.stringify(history.slice(0,50)));
+}
+function renderHistory(){
+  const history = JSON.parse(localStorage.getItem('gh_history')||'[]');
+  const el = document.getElementById('historyList');
+  if(history.length===0){ el.innerHTML = '<div class="empty-state">No actions yet — tap Trigger on Home.</div>'; return; }
+  el.innerHTML = history.map(h => `
+    <div class="log-item">
+      <div class="log-dot"></div>
+      <div>
+        <span class="log-repo">${h.repo}</span>
+        <div class="log-desc">${h.desc}</div>
+        <div class="log-time">${h.time}</div>
+      </div>
+    </div>`).join('');
+}
+function clearHistory(){
+  localStorage.removeItem('gh_history');
+  renderHistory();
+}
+renderHistory();
+</script>
+</body>
+</html>
