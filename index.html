@@ -598,7 +598,7 @@ HARD REQUIREMENTS — do not skip any of these:
    - Table of Contents (anchor-linked)
    - ## Overview — the problem this solves and where it fits in the larger product
    - ## Tech Stack — bullet list of languages/libraries/techniques used and why each was chosen
-   - ## Architecture — an ASCII or mermaid diagram of the module's internal structure/data flow, plus a written walkthrough
+   - ## Architecture — a plain ASCII box-and-arrow diagram (inside a \`\`\`text code fence) of the module's internal structure/data flow, plus a written walkthrough. Do NOT use Mermaid syntax under any circumstances — GitHub's Mermaid renderer is strict and malformed node labels break the page; ASCII art inside a text code fence always renders safely.
    - ## Theoretical Background — explain the underlying algorithm/technique (e.g. how skeletonization/thresholding works, or how the orchestration pattern works) in real technical depth, several paragraphs, as if written by someone who deeply understands the domain
    - ## Installation — pip install steps
    - ## Usage — at least 2 distinct, fully worked code examples with expected output
@@ -651,6 +651,13 @@ HARD REQUIREMENTS — do not skip any of these:
   }
   if(!project.repoName || !project.files || Object.keys(project.files).length === 0){
     throw new Error('Groq response missing required fields. Try again.');
+  }
+  // Safety net: strip any mermaid fences the model may have added despite instructions,
+  // converting them to plain text fences so GitHub never throws a render error.
+  for(const [path, content] of Object.entries(project.files)){
+    if(typeof content === 'string' && content.includes('```mermaid')){
+      project.files[path] = content.replace(/```mermaid/g, '```text');
+    }
   }
   const suffix = Math.random().toString(36).slice(2,6);
   project.repoName = project.repoName.toLowerCase().replace(/[^a-z0-9-]/g,'-') + '-' + suffix;
