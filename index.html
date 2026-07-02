@@ -172,6 +172,8 @@
       <input id="ghUser" placeholder="Arshath015">
       <label>Personal Access Token (classic, repo scope)</label>
       <input id="ghToken" type="password" placeholder="ghp_xxxxxxxxxxxx">
+      <label>Groq API Key (for AI Project Generator)</label>
+      <input id="groqKey" type="password" placeholder="gsk_xxxxxxxxxxxx">
       <button class="btn-secondary" onclick="saveConfig()"><span class="btn-icon">💾</span> Save Config</button>
       <div class="muted" id="configStatus">Stored only in this browser, on this device.</div>
     </div>
@@ -181,7 +183,8 @@
     <div class="card">
       <div class="section-title">Actions</div>
       <button class="btn-primary" onclick="runTrigger()"><span class="btn-icon">🎲</span> Trigger README Update</button>
-      <button class="btn-secondary" onclick="runScaffold()"><span class="btn-icon">🚀</span> Scaffold New Project</button>
+      <button class="btn-secondary" onclick="runScaffold()"><span class="btn-icon">🚀</span> Scaffold Preset Project</button>
+      <button class="btn-secondary" onclick="openAIThemePicker()"><span class="btn-icon">✨</span> AI Generate Project</button>
       <div id="statusCard" style="margin-top:6px;"></div>
     </div>
   </div>
@@ -225,16 +228,18 @@ function switchTab(name){
   if(name==='history') renderHistory();
 }
 
-function cfg(){ return { user: localStorage.getItem('gh_user')||'', token: localStorage.getItem('gh_token')||'' }; }
+function cfg(){ return { user: localStorage.getItem('gh_user')||'', token: localStorage.getItem('gh_token')||'', groq: localStorage.getItem('groq_key')||'' }; }
 function saveConfig(){
   localStorage.setItem('gh_user', document.getElementById('ghUser').value.trim());
   localStorage.setItem('gh_token', document.getElementById('ghToken').value.trim());
+  localStorage.setItem('groq_key', document.getElementById('groqKey').value.trim());
   document.getElementById('configStatus').innerHTML = '<span class="ok">Saved ✓</span> — stored only in this browser.';
 }
 (function initFields(){
   const c = cfg();
   document.getElementById('ghUser').value = c.user;
   document.getElementById('ghToken').value = c.token;
+  document.getElementById('groqKey').value = c.groq;
   if(!c.user || !c.token) switchTab('setup');
 })();
 
@@ -494,6 +499,115 @@ async function createRepoAndFiles(p){
     const existing = await getFile(owner, p.repoName, path);
     await putFile(owner, p.repoName, path, content, `feat: add ${path}`, existing ? existing.sha : null);
   }
+}
+
+// ---------- AI-generated projects via Groq ----------
+const AI_THEMES = {
+  aiera_cad: {
+    label: 'AIERA CAD module',
+    context: `AIERA CAD is an AI-powered architectural assistant that transforms furniture photos into precise 2D CAD-style technical drawings and orthographic blueprints, for architects and designers. Users upload a furniture image, generate renderings from specific angles (isometric, front, perspective), then convert designs into clean minimal line drawings. It has project history tracking, a visual workspace, and the ability to reference prior iterations as design guides. Relevant technical sub-domains: image skeletonization, computer vision edge/contour detection, threshold and binarization analysis, orthographic projection math, line simplification/vectorization, DXF/SVG export.`
+  },
+  aiera_creative: {
+    label: 'Aiera Creative AI module',
+    context: `Aiera Creative AI Automator is a visual-first presentation designer and strategic slide generator for startups, agencies, and enterprises. It converts raw ideas, outlines, or briefs into bespoke high-contrast visual slide compositions using bento grids, KPI dashboards, interactive process flows, dynamic metrics, and editorial layouts. Relevant technical sub-domains: LLM prompt orchestration and chaining, structured JSON layout generation, design-logic/constraint solving for grid layouts, content-to-visual mapping, template scoring/ranking.`
+  },
+  surprise: {
+    label: 'Surprise me',
+    context: `Pick either the AIERA CAD (furniture photo to CAD blueprint tool, using computer vision: skeletonization, contour/edge detection, thresholding, orthographic projection) or the Aiera Creative AI Automator (LLM-driven slide/presentation generator using bento grids, KPI dashboards, layout logic) — whichever gives a more interesting standalone submodule this time.`
+  }
+};
+
+function openAIThemePicker(){
+  document.getElementById('sheetTitle').innerText = 'Generate an AI project';
+  document.getElementById('sheetSub').innerText = 'Pick a theme — a new real submodule will be generated';
+  document.getElementById('previewBody').innerText = '';
+  const chips = Object.entries(AI_THEMES).map(([key, t]) =>
+    `<button class="btn-secondary" style="margin-bottom:8px;" onclick="pickAITheme('${key}')">${t.label}</button>`
+  ).join('');
+  document.getElementById('sheetFiles').innerHTML = `<div>${chips}</div>`;
+  openSheet();
+}
+
+async function pickAITheme(themeKey){
+  const c = cfg();
+  if(!c.groq){
+    document.getElementById('sheetFiles').innerHTML = '<div class="err">Missing Groq API key — go to Setup, paste it, tap Save Config.</div>';
+    return;
+  }
+  document.getElementById('sheetFiles').innerHTML = '';
+  document.getElementById('previewBody').innerHTML = '';
+  document.getElementById('sheetSub').innerText = 'Generating with AI…';
+  document.getElementById('previewBody').outerHTML = '<div id="previewBody" class="spinner-wrap"><div class="spin"></div>Thinking up a project…</div>';
+
+  try{
+    const theme = AI_THEMES[themeKey];
+    const project = await generateAIProject(theme.context);
+    pending = { type:'scaffold', repoName: project.repoName, title: project.title, desc: project.description, files: project.files };
+    showScaffoldPreview();
+  } catch(e){
+    document.getElementById('sheetFiles').innerHTML = `<div class="err">❌ ${e.message}</div>`;
+    const pb = document.getElementById('previewBody');
+    if(pb) pb.outerHTML = '<pre id="previewBody"></pre>';
+  }
+}
+
+async function generateAIProject(themeContext){
+  const c = cfg();
+  const systemPrompt = `You invent small, genuinely useful, buildable open-source Python submodules/utilities related to a larger product context. You always respond with STRICT JSON ONLY — no markdown fences, no commentary, no preamble. The JSON schema is exactly:
+{
+  "repoName": "kebab-case-short-name",
+  "title": "Human readable title",
+  "description": "One to two sentence description",
+  "files": {
+    "README.md": "full readme content with Features, Project Structure, Installation, Usage, Roadmap, License sections",
+    "main.py": "real working python code",
+    "another_module.py": "real working python code"
+  }
+}
+Rules:
+- Generate 4 to 6 files total (real .py modules + requirements.txt + README.md). Optionally include a tests/test_x.py file.
+- Code must be real, runnable, self-contained Python using only standard library or very common packages (numpy, opencv-python, pillow, requests, dataclasses). No placeholders like "TODO" or "pass  # implement".
+- Each project must be a different, specific, scoped submodule — not a generic wrapper. Pick ONE specific technique from the given context and build a focused tool around it.
+- repoName must be lowercase kebab-case, no spaces.
+- Escape all newlines properly as \\n inside JSON string values. Output must be valid parseable JSON.`;
+
+  const userPrompt = `Context: ${themeContext}\n\nInvent ONE new, specific, scoped submodule project right now. Vary it from typical/obvious choices — dig into a specific technique.`;
+
+  let res;
+  try{
+    res = await fetch('https://api.groq.com/openai/v1/chat/completions', {
+      method: 'POST',
+      headers: { 'Authorization': 'Bearer ' + c.groq, 'Content-Type': 'application/json' },
+      body: JSON.stringify({
+        model: 'llama-3.3-70b-versatile',
+        messages: [
+          { role: 'system', content: systemPrompt },
+          { role: 'user', content: userPrompt }
+        ],
+        temperature: 0.95,
+        response_format: { type: 'json_object' }
+      })
+    });
+  } catch(e){
+    throw new Error('Network error reaching Groq. Check your connection and API key.');
+  }
+  if(res.status === 401) throw new Error('401 from Groq — invalid API key. Check Setup.');
+  if(!res.ok){ const t = await res.text(); throw new Error(`Groq API error ${res.status}: ${t.slice(0,200)}`); }
+
+  const data = await res.json();
+  const raw = data.choices[0].message.content;
+  let project;
+  try{
+    project = JSON.parse(raw);
+  } catch(e){
+    throw new Error('Groq returned invalid JSON. Try again.');
+  }
+  if(!project.repoName || !project.files || Object.keys(project.files).length === 0){
+    throw new Error('Groq response missing required fields. Try again.');
+  }
+  const suffix = Math.random().toString(36).slice(2,6);
+  project.repoName = project.repoName.toLowerCase().replace(/[^a-z0-9-]/g,'-') + '-' + suffix;
+  return project;
 }
 
 // ---------- History ----------
