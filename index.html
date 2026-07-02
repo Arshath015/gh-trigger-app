@@ -288,7 +288,7 @@ async function putFile(owner, repo, path, content, message, sha){
 const TYPOS = {"teh ":"the ","wich ":"which ","occured":"occurred","seperate":"separate","recieve":"receive","adress":"address","untill":"until","alot ":"a lot ","thier ":"their "};
 function taskTypoFix(readme){
   for(const [wrong, right] of Object.entries(TYPOS)){
-    if(readme.includes(wrong)) return { newContent: readme.replace(wrong, right), description: `Fix typo: "${wrong.trim()}" → "${right.trim()}"` };
+    if(readme.includes(wrong)) return { newContent: readme.replace(wrong, right), description: `docs: correct terminology in documentation` };
   }
   return null;
 }
@@ -298,27 +298,27 @@ function taskAddBadges(readme){
   const lines = readme.split('\n');
   let insertAt = lines[0] && lines[0].startsWith('#') ? 1 : 0;
   lines.splice(insertAt, 0, '', badge);
-  return { newContent: lines.join('\n'), description: 'Add Python badge under title' };
+  return { newContent: lines.join('\n'), description: 'docs: add technology badges to project header' };
 }
 function taskAddRequirementsSection(readme){
   if(/##\s*Requirements/i.test(readme)) return null;
-  return { newContent: readme + `\n\n## Requirements\n\n\`\`\`\npip install -r requirements.txt\n\`\`\`\n`, description: 'Add missing Requirements section' };
+  return { newContent: readme + `\n\n## Requirements\n\n\`\`\`\npip install -r requirements.txt\n\`\`\`\n`, description: 'docs: document installation requirements' };
 }
 function taskLastUpdated(readme){
   const dateStr = new Date().toISOString().split('T')[0];
   const marker = /\*\*Last updated:\*\* .*/;
-  if(marker.test(readme)) return { newContent: readme.replace(marker, `**Last updated:** ${dateStr}`), description: `Bump "Last updated" to ${dateStr}` };
-  return { newContent: readme + `\n\n---\n**Last updated:** ${dateStr}\n`, description: `Add "Last updated: ${dateStr}" footer` };
+  if(marker.test(readme)) return { newContent: readme.replace(marker, `**Last updated:** ${dateStr}`), description: `chore: update maintenance timestamp` };
+  return { newContent: readme + `\n\n---\n**Last updated:** ${dateStr}\n`, description: `chore: add maintenance timestamp footer` };
 }
 const README_TASKS = [taskTypoFix, taskAddBadges, taskAddRequirementsSection, taskLastUpdated];
 
 async function taskGitignore(owner, repo){
   const existing = await getFile(owner, repo, '.gitignore');
   const standard = ['__pycache__/','*.pyc','.env','venv/','.DS_Store','*.log','.ipynb_checkpoints/'];
-  if(!existing) return { path:'.gitignore', sha:null, newContent: standard.join('\n')+'\n', description: 'Add missing .gitignore with standard entries' };
+  if(!existing) return { path:'.gitignore', sha:null, newContent: standard.join('\n')+'\n', description: 'chore: standardize .gitignore for Python tooling' };
   const missing = standard.filter(e => !existing.content.includes(e));
   if(missing.length === 0) return null;
-  return { path:'.gitignore', sha: existing.sha, newContent: existing.content.trimEnd()+'\n'+missing.join('\n')+'\n', description: `Add ${missing.length} missing .gitignore entries` };
+  return { path:'.gitignore', sha: existing.sha, newContent: existing.content.trimEnd()+'\n'+missing.join('\n')+'\n', description: `chore: extend .gitignore with standard exclusions` };
 }
 
 async function runTrigger(){
@@ -332,7 +332,7 @@ async function runTrigger(){
     let result = null;
     if(tryGitignoreFirst){
       result = await taskGitignore(owner, repo.name);
-      if(result) pending = { type:'file', owner, repo: repo.name, path: result.path, sha: result.sha, newContent: result.newContent, message: `chore: ${result.description}`, description: result.description };
+      if(result) pending = { type:'file', owner, repo: repo.name, path: result.path, sha: result.sha, newContent: result.newContent, message: result.description, description: result.description };
     }
     if(!result){
       const readmeFile = await getFile(owner, repo.name, 'README.md');
@@ -341,7 +341,7 @@ async function runTrigger(){
       let taskResult = null;
       for(const fn of shuffled){ taskResult = fn(readmeFile.content); if(taskResult) break; }
       if(!taskResult){ setStatus('<div class="muted">⚠️ No applicable edits found. Tap Trigger again.</div>'); return; }
-      pending = { type:'file', owner, repo: repo.name, path:'README.md', sha: readmeFile.sha, newContent: taskResult.newContent, message: `docs: ${taskResult.description}`, description: taskResult.description };
+      pending = { type:'file', owner, repo: repo.name, path:'README.md', sha: readmeFile.sha, newContent: taskResult.newContent, message: taskResult.description, description: taskResult.description };
     }
     setStatus('');
     showFilePreview();
@@ -477,6 +477,17 @@ function renderScaffoldFile(){
   document.getElementById('previewBody').innerText = body;
 }
 
+function commitMessageForPath(path){
+  const lower = path.toLowerCase();
+  if(lower.endsWith('readme.md')) return 'docs: add comprehensive project documentation';
+  if(lower.includes('test')) return 'test: add unit test coverage';
+  if(lower.endsWith('requirements.txt')) return 'chore: define project dependencies';
+  if(lower.endsWith('.json')) return 'feat: add configuration/data assets';
+  if(lower.includes('example') || lower.includes('sample') || lower.includes('demo')) return 'docs: add usage examples';
+  if(lower.endsWith('.py')) return `feat: implement ${path.split('/').pop().replace('.py','').replace(/_/g,' ')} module`;
+  return `feat: add ${path}`;
+}
+
 async function createRepoAndFiles(p){
   const c = cfg();
   if(!c.token || !c.user) throw new Error("Missing username or token — go to Setup and Save Config.");
@@ -497,7 +508,7 @@ async function createRepoAndFiles(p){
   await new Promise(r=>setTimeout(r, 1500));
   for(const [path, content] of Object.entries(p.files)){
     const existing = await getFile(owner, p.repoName, path);
-    await putFile(owner, p.repoName, path, content, `feat: add ${path}`, existing ? existing.sha : null);
+    await putFile(owner, p.repoName, path, content, commitMessageForPath(path), existing ? existing.sha : null);
   }
 }
 
@@ -542,6 +553,8 @@ async function pickAITheme(themeKey){
   try{
     const theme = AI_THEMES[themeKey];
     const project = await generateAIProject(theme.context);
+    const pb = document.getElementById('previewBody');
+    if(pb && pb.tagName !== 'PRE') pb.outerHTML = '<pre id="previewBody"></pre>';
     pending = { type:'scaffold', repoName: project.repoName, title: project.title, desc: project.description, files: project.files };
     showScaffoldPreview();
   } catch(e){
@@ -553,25 +566,56 @@ async function pickAITheme(themeKey){
 
 async function generateAIProject(themeContext){
   const c = cfg();
-  const systemPrompt = `You invent small, genuinely useful, buildable open-source Python submodules/utilities related to a larger product context. You always respond with STRICT JSON ONLY — no markdown fences, no commentary, no preamble. The JSON schema is exactly:
+  const systemPrompt = `You are a senior staff engineer producing production-grade, portfolio-quality open-source submodules for a real company's tech stack. You always respond with STRICT JSON ONLY — no markdown fences, no commentary before or after, no explanation. The JSON schema is exactly:
 {
   "repoName": "kebab-case-short-name",
   "title": "Human readable title",
   "description": "One to two sentence description",
   "files": {
-    "README.md": "full readme content with Features, Project Structure, Installation, Usage, Roadmap, License sections",
-    "main.py": "real working python code",
-    "another_module.py": "real working python code"
+    "README.md": "...",
+    "src/<module>.py": "...",
+    "src/<module2>.py": "...",
+    "src/<module3>.py": "...",
+    "tests/test_<module>.py": "...",
+    "tests/test_<module2>.py": "...",
+    "examples/<usecase>.py": "...",
+    "examples/<usecase2>.py": "...",
+    "requirements.txt": "..."
   }
 }
-Rules:
-- Generate 4 to 6 files total (real .py modules + requirements.txt + README.md). Optionally include a tests/test_x.py file.
-- Code must be real, runnable, self-contained Python using only standard library or very common packages (numpy, opencv-python, pillow, requests, dataclasses). No placeholders like "TODO" or "pass  # implement".
-- Each project must be a different, specific, scoped submodule — not a generic wrapper. Pick ONE specific technique from the given context and build a focused tool around it.
-- repoName must be lowercase kebab-case, no spaces.
-- Escape all newlines properly as \\n inside JSON string values. Output must be valid parseable JSON.`;
 
-  const userPrompt = `Context: ${themeContext}\n\nInvent ONE new, specific, scoped submodule project right now. Vary it from typical/obvious choices — dig into a specific technique.`;
+HARD REQUIREMENTS — do not skip any of these:
+
+1. SCOPE: This must read as a genuine, non-trivial engineering submodule — not a toy script. Pick ONE specific technique from the given context (e.g. a specific CV algorithm, a specific LLM-orchestration pattern) and build a properly layered implementation around it: separate concerns across at least 3 substantial Python modules under src/ (e.g. core algorithm, data/IO handling, a pipeline/orchestrator class, a CLI or API entrypoint). Each module should be realistically sized (roughly 80-200 lines), with classes, type hints, docstrings, and real logic — not stubs, not "pass # TODO", not placeholder comments.
+
+2. TESTS: Include at least 2 separate test files under tests/, using pytest style, each with multiple real test functions covering edge cases, not just a single happy-path assertion.
+
+3. EXAMPLES: Include at least 2 example/demo scripts under examples/ showing different realistic use cases of the module (different inputs/configurations), fully runnable.
+
+4. README.md must be long-form and genuinely comprehensive, written in rich GitHub-flavored Markdown, structured with these sections in order:
+   - Title + 3-4 shields.io badges (python version, license, build status, code style)
+   - One-paragraph elevator pitch
+   - Table of Contents (anchor-linked)
+   - ## Overview — the problem this solves and where it fits in the larger product
+   - ## Tech Stack — bullet list of languages/libraries/techniques used and why each was chosen
+   - ## Architecture — an ASCII or mermaid diagram of the module's internal structure/data flow, plus a written walkthrough
+   - ## Theoretical Background — explain the underlying algorithm/technique (e.g. how skeletonization/thresholding works, or how the orchestration pattern works) in real technical depth, several paragraphs, as if written by someone who deeply understands the domain
+   - ## Installation — pip install steps
+   - ## Usage — at least 2 distinct, fully worked code examples with expected output
+   - ## API Reference — document the main public classes/functions, params, return types
+   - ## Case Studies — 2 short realistic scenarios describing how this submodule would be used in production within the larger product, with concrete before/after or input/output framing
+   - ## Testing — how to run the test suite
+   - ## Performance Considerations or Limitations
+   - ## Roadmap — 4-6 realistic future items
+   - ## License (MIT)
+
+5. Code must be real, runnable Python using only standard library or common packages (numpy, opencv-python, pillow, requests, pydantic, dataclasses). No network calls that would fail in CI unless mocked in tests.
+
+6. repoName must be lowercase kebab-case, concise, specific to the technique (not generic like "cad-tool").
+
+7. Escape all newlines/quotes properly as valid JSON string content. The entire response must be one valid parseable JSON object, nothing else.`;
+
+  const userPrompt = `Context: ${themeContext}\n\nInvent ONE new, specific, scoped, production-grade submodule right now, following every hard requirement in the system prompt exactly — especially the long-form README and the multi-module/multi-test/multi-example file structure. Go deep into a specific technique rather than building something generic.`;
 
   let res;
   try{
@@ -584,7 +628,8 @@ Rules:
           { role: 'system', content: systemPrompt },
           { role: 'user', content: userPrompt }
         ],
-        temperature: 0.95,
+        temperature: 0.9,
+        max_tokens: 8000,
         response_format: { type: 'json_object' }
       })
     });
@@ -595,11 +640,13 @@ Rules:
   if(!res.ok){ const t = await res.text(); throw new Error(`Groq API error ${res.status}: ${t.slice(0,200)}`); }
 
   const data = await res.json();
+  const finishReason = data.choices[0].finish_reason;
   const raw = data.choices[0].message.content;
   let project;
   try{
     project = JSON.parse(raw);
   } catch(e){
+    if(finishReason === 'length') throw new Error('Groq response was cut off before completing (too large). Try again — it usually succeeds on a retry.');
     throw new Error('Groq returned invalid JSON. Try again.');
   }
   if(!project.repoName || !project.files || Object.keys(project.files).length === 0){
