@@ -638,7 +638,7 @@ HARD REQUIREMENTS — do not skip any of these. Output that reads like a generic
           { role: 'user', content: userPrompt }
         ],
         temperature: 0.85,
-        max_tokens: 12000,
+        max_tokens: 5000,
         response_format: { type: 'json_object' }
       })
     });
@@ -646,6 +646,8 @@ HARD REQUIREMENTS — do not skip any of these. Output that reads like a generic
     throw new Error('Network error reaching Groq. Check your connection and API key.');
   }
   if(res.status === 401) throw new Error('401 from Groq — invalid API key. Check Setup.');
+  if(res.status === 413) throw new Error('413 — this request is too large for your Groq plan\'s per-minute token limit. Wait ~60 seconds and try again; if it keeps happening, your Groq account tier has a lower cap than this app is requesting.');
+  if(res.status === 429) throw new Error('429 — Groq rate limit hit. Wait about a minute and try again.');
   if(!res.ok){ const t = await res.text(); throw new Error(`Groq API error ${res.status}: ${t.slice(0,200)}`); }
 
   const data = await res.json();
