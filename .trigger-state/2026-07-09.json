@@ -1,10 +1,13 @@
 {
   "date": "2026-07-09",
   "target": 6,
-  "done": 3,
+  "done": 6,
   "log": [
     "AI-Voice-Agent: chore: add internal dev note",
     "Handwritten-Digit-Recognition: chore: add maintenance timestamp footer",
-    "Emotional-Intelligence-Project: chore: add maintenance timestamp footer"
+    "Emotional-Intelligence-Project: chore: add maintenance timestamp footer",
+    "Adaptive-Autonomous-Agent-with-Self-Correction-Loop: docs: document installation requirements",
+    "Aiera-Cad: chore: add internal dev note",
+    "Aiera-Cad: chore: extend .gitignore with standard exclusions"
   ]
 }
