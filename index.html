@@ -588,10 +588,11 @@ Requirements (be concise but real — no filler, no stubs, no "pass # TODO"):
 2. 2 test files under tests/, pytest style, 2-3 real assertions each including one edge case.
 3. 1 example script under examples/, fully runnable, realistic input.
 4. 1 case_studies/*.md file: a short, specific, concrete narrative of this submodule in production use (realistic numbers, one edge case handled) — written like an internal doc, not marketing copy.
-5. README.md: title + 2 badges, short pitch, ## Overview, ## Tech Stack, ## Architecture (ASCII diagram in a text code fence — never Mermaid), ## Theoretical Background (real technical depth, a few paragraphs), ## Installation, ## Usage (1 worked example), ## Limitations, ## Roadmap, ## License (MIT).
-6. Only stdlib or common packages (numpy, opencv-python, pillow, requests, pydantic).
-7. repoName: lowercase kebab-case, specific to the technique, never generic ("ai-tool" etc).
-8. Valid JSON only, newlines escaped properly.`;
+5. README.md MUST include every one of these sections, in order, none skipped: (a) title + exactly 2 shields.io badge markdown lines (e.g. ![Python](https://img.shields.io/badge/python-3.10-blue.svg)), (b) one-line pitch, (c) a Table of Contents with markdown anchor links to every section below, (d) ## Overview, (e) ## Tech Stack, (f) ## Architecture with an ASCII box diagram in a \`\`\`text fence (never Mermaid), (g) ## Theoretical Background — real technical depth, 2-3 paragraphs, (h) ## Installation showing \`pip install -r requirements.txt\` followed by \`git clone\` of THIS repo — never invent a fake published PyPI package name to pip-install, this repo is not published to PyPI, (i) ## Usage — one worked example importing directly from \`src.<module>\` (matching actual file paths in this project, not a pip package name), (j) ## API Reference — list the real public classes/functions from src/ with their actual parameter names, (k) ## Case Studies linking the case_studies file, (l) ## Testing, (m) ## Limitations, (n) ## Roadmap, (o) ## License (MIT).
+6. CRITICAL FORMATTING RULE: never output raw unicode escape sequences as literal text (e.g. never write the six characters backslash-u-2-2-6-4). If you need a comparison symbol, either write the actual UTF-8 character directly (≤, ≥) or, safer, just use plain ASCII: "<=" and ">=" and the word "and"/"or" instead of mathematical symbols. Prefer plain ASCII math notation throughout for reliability.
+7. Only stdlib or common packages (numpy, opencv-python, pillow, requests, pydantic).
+8. repoName: lowercase kebab-case, specific to the technique, never generic ("ai-tool" etc).
+9. Valid JSON only, newlines escaped properly.`;
 
   const userPrompt = `Context: ${themeContext}\n\nInvent ONE new, specific, scoped submodule now, following every requirement. Name the exact technique first, then build files consistent with it. Depth over breadth.`;
 
@@ -607,7 +608,7 @@ Requirements (be concise but real — no filler, no stubs, no "pass # TODO"):
           { role: 'user', content: userPrompt }
         ],
         temperature: 0.85,
-        max_tokens: 3000,
+        max_tokens: 4000,
         response_format: { type: 'json_object' }
       })
     });
@@ -635,9 +636,19 @@ Requirements (be concise but real — no filler, no stubs, no "pass # TODO"):
   // Safety net: strip any mermaid fences the model may have added despite instructions,
   // converting them to plain text fences so GitHub never throws a render error.
   for(const [path, content] of Object.entries(project.files)){
-    if(typeof content === 'string' && content.includes('```mermaid')){
-      project.files[path] = content.replace(/```mermaid/g, '```text');
-    }
+    if(typeof content !== 'string') continue;
+    let cleaned = content;
+    if(cleaned.includes('```mermaid')) cleaned = cleaned.replace(/```mermaid/g, '```text');
+    // Fix literal backslash-u-escape text artifacts (e.g. the model writing \u2264 as plain text
+    // instead of a real character) by converting them to plain ASCII equivalents.
+    cleaned = cleaned
+      .replace(/\\u2264/g, '<=')
+      .replace(/\\u2265/g, '>=')
+      .replace(/\\u2260/g, '!=')
+      .replace(/\\u00d7/gi, 'x')
+      .replace(/\\u2013/g, '-')
+      .replace(/\\u2014/g, '--');
+    project.files[path] = cleaned;
   }
   const cleanName = project.repoName.toLowerCase().replace(/[^a-z0-9-]/g,'-').replace(/^-+|-+$/g,'');
   project.repoName = await ensureUniqueRepoName(cleanName);
