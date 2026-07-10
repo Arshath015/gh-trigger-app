@@ -1,8 +1,9 @@
 {
   "date": "2026-07-10",
   "target": 5,
-  "done": 1,
+  "done": 2,
   "log": [
-    "llm-prompt-chainer-xnwu: chore: standardize .gitignore for project tooling"
+    "llm-prompt-chainer-xnwu: chore: standardize .gitignore for project tooling",
+    "image-threshold-optimizer-z2y1: docs: add changelog"
   ]
 }
