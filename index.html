@@ -639,9 +639,26 @@ Requirements (be concise but real — no filler, no stubs, no "pass # TODO"):
       project.files[path] = content.replace(/```mermaid/g, '```text');
     }
   }
-  const suffix = Math.random().toString(36).slice(2,6);
-  project.repoName = project.repoName.toLowerCase().replace(/[^a-z0-9-]/g,'-') + '-' + suffix;
+  const cleanName = project.repoName.toLowerCase().replace(/[^a-z0-9-]/g,'-').replace(/^-+|-+$/g,'');
+  project.repoName = await ensureUniqueRepoName(cleanName);
   return project;
+}
+
+async function ensureUniqueRepoName(baseName){
+  const c = cfg();
+  try{
+    const res = await fetch(`${API}/repos/${c.user}/${baseName}`, { headers: authHeaders() });
+    if(res.status === 404) return baseName; // name is free, use it as-is
+  } catch(e){ /* fall through to suffixed name on any check failure */ }
+  // Name taken (or check failed) — append a short, clean numeric suffix instead of random gibberish.
+  for(let n = 2; n <= 20; n++){
+    const candidate = `${baseName}-v${n}`;
+    try{
+      const res = await fetch(`${API}/repos/${c.user}/${candidate}`, { headers: authHeaders() });
+      if(res.status === 404) return candidate;
+    } catch(e){ /* keep trying */ }
+  }
+  return `${baseName}-${Date.now().toString().slice(-4)}`;
 }
 
 // ---------- History ----------
