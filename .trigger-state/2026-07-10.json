@@ -1,0 +1,8 @@
+{
+  "date": "2026-07-10",
+  "target": 5,
+  "done": 1,
+  "log": [
+    "llm-prompt-chainer-xnwu: chore: standardize .gitignore for project tooling"
+  ]
+}
