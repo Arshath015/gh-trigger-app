@@ -565,66 +565,35 @@ async function pickAITheme(themeKey){
 
 async function generateAIProject(themeContext){
   const c = cfg();
-  const systemPrompt = `You are a senior staff engineer producing production-grade, portfolio-quality open-source submodules for a real company's tech stack. You always respond with STRICT JSON ONLY — no markdown fences, no commentary before or after, no explanation. The JSON schema is exactly:
+  const systemPrompt = `You are a senior engineer producing a real, portfolio-quality open-source submodule. Respond with STRICT JSON ONLY, no markdown fences, no commentary. Schema:
 {
   "repoName": "kebab-case-short-name",
   "title": "Human readable title",
-  "description": "One to two sentence description",
+  "description": "1-2 sentence description",
   "files": {
     "README.md": "...",
     "src/<module>.py": "...",
     "src/<module2>.py": "...",
     "src/<module3>.py": "...",
-    "src/<module4>.py": "...",
     "tests/test_<module>.py": "...",
     "tests/test_<module2>.py": "...",
-    "tests/test_<module3>.py": "...",
     "examples/<usecase>.py": "...",
-    "examples/<usecase2>.py": "...",
-    "case_studies/<scenario1>.md": "...",
-    "case_studies/<scenario2>.md": "...",
-    "results/benchmark.md": "...",
+    "case_studies/<scenario>.md": "...",
     "requirements.txt": "..."
   }
 }
 
-HARD REQUIREMENTS — do not skip any of these. Output that reads like a generic template will be rejected:
+Requirements (be concise but real — no filler, no stubs, no "pass # TODO"):
+1. Pick ONE specific named technique from the context (e.g. "Zhang-Suen skeletonization", "map-reduce multi-agent orchestration with retry/backoff") and implement real logic for it — not a wrapper around a single library call. 3 Python modules under src/ (60-120 lines each): core algorithm, data/IO layer, orchestrator/CLI entrypoint. Use classes, type hints, docstrings.
+2. 2 test files under tests/, pytest style, 2-3 real assertions each including one edge case.
+3. 1 example script under examples/, fully runnable, realistic input.
+4. 1 case_studies/*.md file: a short, specific, concrete narrative of this submodule in production use (realistic numbers, one edge case handled) — written like an internal doc, not marketing copy.
+5. README.md: title + 2 badges, short pitch, ## Overview, ## Tech Stack, ## Architecture (ASCII diagram in a text code fence — never Mermaid), ## Theoretical Background (real technical depth, a few paragraphs), ## Installation, ## Usage (1 worked example), ## Limitations, ## Roadmap, ## License (MIT).
+6. Only stdlib or common packages (numpy, opencv-python, pillow, requests, pydantic).
+7. repoName: lowercase kebab-case, specific to the technique, never generic ("ai-tool" etc).
+8. Valid JSON only, newlines escaped properly.`;
 
-1. SCOPE & DEPTH: This must read as a genuine, non-trivial, HARD-TO-FAKE engineering submodule with real domain knowledge baked into the code itself — not just the README. Pick ONE narrow, specific technique from the given context (name it explicitly, e.g. "Zhang-Suen thinning for image skeletonization" or "map-reduce style multi-agent LLM orchestration with retry/backoff") and implement it with real algorithmic logic, not a wrapper around a single library call. At least 4 substantial Python modules under src/ (roughly 100-250 lines each), each with a distinct responsibility (e.g. core algorithm implementation, data/IO or preprocessing layer, an orchestrator/pipeline class that composes the pieces, a CLI or thin API entrypoint, a config/validation layer). Use classes, type hints, dataclasses or pydantic models, docstrings, and meaningful error handling. Absolutely no "pass  # TODO", no unimplemented stubs, no functions that just return a hardcoded constant pretending to be a result — every function must do real, traceable computation on its inputs.
-
-2. TESTS: At least 3 separate test files under tests/, pytest style, each with 3+ real test functions that assert on actual computed values (not just "assert result is not None"), including at least one edge-case test per file (empty input, malformed input, boundary values).
-
-3. EXAMPLES: At least 2 example/demo scripts under examples/, each showing a different realistic configuration/input, fully runnable end-to-end, printing meaningful output.
-
-4. CASE STUDIES: 2 separate markdown files under case_studies/, each a concrete, specific narrative (not generic) of how this submodule is used inside the larger product — include realistic specifics: approximate input size/shape, what the pipeline decided, what the output looked like, and what edge case or failure mode had to be handled. Written like an internal engineering postmortem or design doc excerpt, not marketing copy.
-
-5. RESULTS: results/benchmark.md must contain a written mini-benchmark with a plain ASCII bar chart (using characters like █ and ░ inside a \`\`\`text fence) comparing at least 3-4 metrics or configurations (e.g. processing time across input sizes, accuracy across parameter settings) with a short paragraph interpreting the numbers. Keep numbers plausible and internally consistent with the technique described, not implausible marketing digits.
-
-6. README.md must be long-form and comprehensive, rich GitHub-flavored Markdown, sections in order:
-   - Title + 3-4 shields.io badges
-   - One-paragraph elevator pitch
-   - Table of Contents (anchor-linked)
-   - ## Overview
-   - ## Tech Stack — with reasoning for each choice
-   - ## Architecture — ASCII box-and-arrow diagram inside a \`\`\`text fence (never Mermaid — GitHub's renderer is strict and malformed labels break the page) plus a written walkthrough
-   - ## Theoretical Background — real technical depth on the specific algorithm/technique named in requirement 1, several paragraphs, written like someone who has actually implemented this before
-   - ## Installation
-   - ## Usage — 2+ worked examples with realistic expected output
-   - ## API Reference
-   - ## Case Studies — short summaries linking to the case_studies/ files
-   - ## Benchmark Results — short summary linking to results/benchmark.md
-   - ## Testing
-   - ## Limitations — genuine, specific limitations of this exact technique, not generic disclaimers
-   - ## Roadmap — 4-6 specific, plausible next steps
-   - ## License (MIT)
-
-7. Code must be real, runnable Python using only standard library or common packages (numpy, opencv-python, pillow, requests, pydantic, dataclasses). No network calls that would fail in CI unless mocked in tests.
-
-8. repoName must be lowercase kebab-case, specific to the exact technique named (never generic terms like "ai-tool", "smart-helper", "automation-engine").
-
-9. Escape all newlines/quotes properly as valid JSON string content. The entire response must be one valid parseable JSON object, nothing else.`;
-
-  const userPrompt = `Context: ${themeContext}\n\nInvent ONE new, specific, scoped, production-grade submodule right now, following every hard requirement exactly. Name the exact technique/algorithm you're implementing before writing any code (mentally), then build all files consistent with that specific choice. Prioritize depth and internal consistency over breadth — this should look like something a real engineer spent real hours building, not a generated template.`;
+  const userPrompt = `Context: ${themeContext}\n\nInvent ONE new, specific, scoped submodule now, following every requirement. Name the exact technique first, then build files consistent with it. Depth over breadth.`;
 
   let res;
   try{
@@ -638,7 +607,7 @@ HARD REQUIREMENTS — do not skip any of these. Output that reads like a generic
           { role: 'user', content: userPrompt }
         ],
         temperature: 0.85,
-        max_tokens: 5000,
+        max_tokens: 3000,
         response_format: { type: 'json_object' }
       })
     });
