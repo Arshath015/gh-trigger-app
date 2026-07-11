@@ -1,7 +1,7 @@
 {
   "date": "2026-07-11",
   "target": 18,
-  "done": 12,
+  "done": 13,
   "log": [
     "ID-Card-detector-and-alert-system: docs: add changelog",
     "Simple-ID-Card-Generator: docs: add technology badges to project header",
@@ -14,6 +14,7 @@
     "nexus-orchestrator: docs: add technology badges to project header",
     "CortexAI: chore: add maintenance timestamp footer",
     "Handwritten-Digit-Recognition: chore: standardize .gitignore for project tooling",
-    "nexus-orchestrator: chore: extend .gitignore with standard exclusions"
+    "nexus-orchestrator: chore: extend .gitignore with standard exclusions",
+    "altossa-home-curator: docs: document installation requirements"
   ]
 }
