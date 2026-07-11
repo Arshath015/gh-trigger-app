@@ -1,8 +1,9 @@
 {
   "date": "2026-07-11",
   "target": 18,
-  "done": 1,
+  "done": 2,
   "log": [
-    "ID-Card-detector-and-alert-system: docs: add changelog"
+    "ID-Card-detector-and-alert-system: docs: add changelog",
+    "Simple-ID-Card-Generator: docs: add technology badges to project header"
   ]
 }
