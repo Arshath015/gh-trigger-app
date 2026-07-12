@@ -1,9 +1,12 @@
 {
   "date": "2026-07-12",
   "target": 16,
-  "done": 2,
+  "done": 5,
   "log": [
     "Aiera-Cad: docs: add changelog",
-    "altossa-streamlit-deployment: docs: add project note"
+    "altossa-streamlit-deployment: docs: add project note",
+    "ai_chatbot: docs: add project note",
+    "Handwritten-Digit-Recognition: docs: update changelog",
+    "ai_chatbot: docs: add project note"
   ]
 }
