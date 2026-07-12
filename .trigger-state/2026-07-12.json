@@ -1,7 +1,7 @@
 {
   "date": "2026-07-12",
   "target": 16,
-  "done": 13,
+  "done": 16,
   "log": [
     "Aiera-Cad: docs: add changelog",
     "altossa-streamlit-deployment: docs: add project note",
@@ -15,6 +15,9 @@
     "ID_card: docs: add changelog",
     "nexus-orchestrator: docs: document installation requirements",
     "llm-prompt-chainer-xnwu: docs: add project note",
-    "Candle-Images: docs: add changelog"
+    "Candle-Images: docs: add changelog",
+    "Women-s-Safety-Alert-System: docs: add changelog",
+    "zhang-suen-skeletonizer: docs: add technology badges to project header",
+    "AI-Voice-Agent: docs: document installation requirements"
   ]
 }
