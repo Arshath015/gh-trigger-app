@@ -1,7 +1,7 @@
 {
   "date": "2026-07-14",
   "target": 24,
-  "done": 8,
+  "done": 10,
   "log": [
     "altossa-streamlit-deployment: docs: add project note",
     "EmotionGAN: docs: add changelog",
@@ -10,6 +10,8 @@
     "Women-s-Safety-Alert-System: docs: add project note",
     "ai_chatbot: docs: add changelog",
     "llm-prompt-chainer-xnwu: docs: add changelog",
-    "llm-prompt-chainer-xnwu: chore: add maintenance timestamp footer"
+    "llm-prompt-chainer-xnwu: chore: add maintenance timestamp footer",
+    "image-threshold-optimizer-z2y1: docs: add technology badges to project header",
+    "AI-Voice-Agent: chore: extend .gitignore with standard exclusions"
   ]
 }
