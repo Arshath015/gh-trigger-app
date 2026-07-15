@@ -373,6 +373,7 @@ async function approveAction(){
       setStatus(spinner('Creating repo & pushing files…'));
       await createRepoAndFiles(pending);
       if(pending._technique) markTechniqueUsed(pending._technique);
+      if(pending._format) markFormatUsed(pending._format);
       logAction(pending.repoName, `Scaffolded new project: ${pending.title}`);
       setStatus(`<div class="ok">✅ Created repo ${pending.repoName}</div>`);
     }
@@ -625,6 +626,59 @@ function pickUnusedTechnique(pool){
   return available[Math.floor(Math.random() * available.length)];
 }
 
+// Independent variety pool: not just WHAT technique, but HOW the project is shaped —
+// folder layout, project archetype, README tone. Tracked separately so technique and
+// format vary independently of each other, avoiding same-format-every-time staleness.
+const FORMAT_VARIANTS = [
+  {
+    name: "CLI tool",
+    spec: `Structure as a command-line tool. Layout: cli.py (argparse entrypoint) at root, core/ for logic modules, tests/, examples/ with shell-style usage snippets. README tone: terse, usage-first, like a Unix manpage. Architecture diagram shows CLI arg flow into pipeline stages.`
+  },
+  {
+    name: "Library package",
+    spec: `Structure as an installable Python library. Layout: <package_name>/__init__.py exposing a clean public API, <package_name>/core.py, <package_name>/utils.py, tests/, examples/ showing import-and-use snippets. README tone: API-reference-first, like a library on PyPI.`
+  },
+  {
+    name: "Research notebook-first repo",
+    spec: `Structure as a research-style repo. Layout: notebooks/exploration.py (a script written in notebook-cell style with '# %%' markers), src/ for the extracted reusable core, tests/, results/findings.md with a written analysis. README tone: exploratory, hypothesis-driven, written like a research log.`
+  },
+  {
+    name: "Microservice-style API",
+    spec: `Structure as a small internal API service. Layout: api/routes.py (simple stdlib http.server or Flask-style handler, no real network calls needed in tests), core/ for business logic, tests/, examples/client_example.py showing a sample request/response. README tone: service-oriented, includes an endpoint reference table.`
+  },
+  {
+    name: "Event-driven pipeline",
+    spec: `Structure as a staged processing pipeline. Layout: pipeline/stages/ with one file per stage (numbered or named by responsibility), pipeline/orchestrator.py composing them, tests/, examples/run_pipeline.py. README tone: describes data flow stage-by-stage with an explicit ASCII pipeline diagram.`
+  },
+  {
+    name: "Plugin/extension architecture",
+    spec: `Structure around a plugin pattern. Layout: core/registry.py (plugin registration system), plugins/ with 2 example plugin implementations of the technique, tests/, examples/. README tone: explains the extension points and how to add a new plugin.`
+  },
+  {
+    name: "Config-driven engine",
+    spec: `Structure around a declarative config-driven engine. Layout: engine/ for the core runtime, config/example_config.yaml or .json describing a run, tests/, examples/. README tone: config-schema-first, shows how behavior changes purely via config.`
+  },
+  {
+    name: "Benchmark/comparison harness",
+    spec: `Structure as a benchmark harness comparing implementation variants of the technique. Layout: implementations/ with 2 variant implementations (e.g. naive vs optimized), harness/runner.py, tests/, results/comparison.md with real numeric comparisons. README tone: benchmark-report style with a results table.`
+  }
+];
+
+function getUsedFormats(){
+  return JSON.parse(localStorage.getItem('used_formats') || '[]');
+}
+function markFormatUsed(name){
+  const used = getUsedFormats();
+  used.push(name);
+  localStorage.setItem('used_formats', JSON.stringify(used.slice(-200)));
+}
+function pickUnusedFormat(){
+  const used = new Set(getUsedFormats());
+  let available = FORMAT_VARIANTS.filter(f => !used.has(f.name));
+  if(available.length === 0) available = FORMAT_VARIANTS;
+  return available[Math.floor(Math.random() * available.length)];
+}
+
 function openAIThemePicker(){
   document.getElementById('sheetTitle').innerText = 'Generate an AI project';
   document.getElementById('sheetSub').innerText = 'Pick a theme — a new real submodule will be generated';
@@ -651,10 +705,11 @@ async function pickAITheme(themeKey){
     const theme = AI_THEMES[themeKey];
     const pool = TECHNIQUE_POOLS[themeKey];
     const technique = pickUnusedTechnique(pool);
-    const project = await generateAIProject(theme.context, technique);
+    const format = pickUnusedFormat();
+    const project = await generateAIProject(theme.context, technique, format);
     const pb = document.getElementById('previewBody');
     if(pb && pb.tagName !== 'PRE') pb.outerHTML = '<pre id="previewBody"></pre>';
-    pending = { type:'scaffold', repoName: project.repoName, title: project.title, desc: project.description, files: project.files, _technique: technique };
+    pending = { type:'scaffold', repoName: project.repoName, title: project.title, desc: project.description, files: project.files, _technique: technique, _format: format.name };
     showScaffoldPreview();
   } catch(e){
     document.getElementById('sheetFiles').innerHTML = `<div class="err">❌ ${e.message}</div>`;
@@ -663,7 +718,7 @@ async function pickAITheme(themeKey){
   }
 }
 
-async function generateAIProject(themeContext, technique){
+async function generateAIProject(themeContext, technique, format){
   const c = cfg();
   const systemPrompt = `You are a senior engineer producing a real, portfolio-quality open-source submodule. Respond with STRICT JSON ONLY, no markdown fences, no commentary. Schema:
 {
@@ -671,30 +726,24 @@ async function generateAIProject(themeContext, technique){
   "title": "Human readable title",
   "description": "1-2 sentence description",
   "files": {
-    "README.md": "...",
-    "src/<module>.py": "...",
-    "src/<module2>.py": "...",
-    "src/<module3>.py": "...",
-    "tests/test_<module>.py": "...",
-    "tests/test_<module2>.py": "...",
-    "examples/<usecase>.py": "...",
-    "case_studies/<scenario>.md": "...",
-    "requirements.txt": "..."
+    "<path>": "...file content...",
+    "...": "..."
   }
 }
+The exact file paths/keys are yours to decide based on the PROJECT FORMAT given below — do not default to a generic src/tests/examples layout unless that IS the given format.
 
 Requirements (be concise but real — no filler, no stubs, no "pass # TODO"):
-1. You will be given ONE exact technique to implement — use it exactly as given, do not substitute a different one. Implement real logic for it — not a wrapper around a single library call. 3 Python modules under src/ (60-120 lines each): core algorithm, data/IO layer, orchestrator/CLI entrypoint. Use classes, type hints, docstrings.
-2. 2 test files under tests/, pytest style, 2-3 real assertions each including one edge case.
-3. 1 example script under examples/, fully runnable, realistic input.
-4. 1 case_studies/*.md file: a short, specific, concrete narrative of this submodule in production use (realistic numbers, one edge case handled) — written like an internal doc, not marketing copy.
-5. README.md MUST include every one of these sections, in order, none skipped: (a) title + exactly 2 shields.io badge markdown lines (e.g. ![Python](https://img.shields.io/badge/python-3.10-blue.svg)), (b) one-line pitch, (c) a Table of Contents with markdown anchor links to every section below, (d) ## Overview, (e) ## Tech Stack, (f) ## Architecture with an ASCII box diagram in a \`\`\`text fence (never Mermaid), (g) ## Theoretical Background — real technical depth, 2-3 paragraphs, (h) ## Installation showing \`pip install -r requirements.txt\` followed by \`git clone\` of THIS repo — never invent a fake published PyPI package name to pip-install, this repo is not published to PyPI, (i) ## Usage — one worked example importing directly from \`src.<module>\` (matching actual file paths in this project, not a pip package name), (j) ## API Reference — list the real public classes/functions from src/ with their actual parameter names, (k) ## Case Studies linking the case_studies file, (l) ## Testing, (m) ## Limitations, (n) ## Roadmap, (o) ## License (MIT).
-6. CRITICAL FORMATTING RULE: never output raw unicode escape sequences as literal text (e.g. never write the six characters backslash-u-2-2-6-4). If you need a comparison symbol, either write the actual UTF-8 character directly (≤, ≥) or, safer, just use plain ASCII: "<=" and ">=" and the word "and"/"or" instead of mathematical symbols. Prefer plain ASCII math notation throughout for reliability.
+1. You will be given ONE exact technique to implement — use it exactly as given, do not substitute a different one. Implement real logic for it — not a wrapper around a single library call. At least 3 substantial code modules (60-120 lines each) with distinct responsibilities, laid out according to the PROJECT FORMAT below. Use classes, type hints, docstrings.
+2. At least 2 test files, pytest style, 2-3 real assertions each including one edge case, placed according to the PROJECT FORMAT.
+3. At least 1 example/demo file, fully runnable, realistic input, placed according to the PROJECT FORMAT.
+4. At least 1 markdown file with a short, specific, concrete narrative or analysis (not generic) — written like an internal doc, not marketing copy. Its exact name/location depends on the PROJECT FORMAT (e.g. a case study, a research log entry, or a benchmark report — follow the format spec).
+5. README.md MUST include every one of these sections, in order, none skipped: (a) title + exactly 2 shields.io badge markdown lines, (b) one-line pitch, (c) a Table of Contents with markdown anchor links, (d) ## Overview, (e) ## Tech Stack, (f) ## Architecture with an ASCII diagram in a \`\`\`text fence (never Mermaid) matching the PROJECT FORMAT's actual structure, (g) ## Theoretical Background — real technical depth, 2-3 paragraphs, (h) ## Installation showing \`pip install -r requirements.txt\` + \`git clone\` of THIS repo — never invent a fake published PyPI package, (i) ## Usage — one worked example matching actual file paths in this project, (j) ## API Reference — real public classes/functions with actual parameter names, (k) a section linking to the markdown doc from requirement 4, (l) ## Testing, (m) ## Limitations, (n) ## Roadmap, (o) ## License (MIT). The README's overall TONE should match the PROJECT FORMAT spec (e.g. terse CLI manpage vs research-log vs benchmark-report style).
+6. CRITICAL FORMATTING RULE: never output raw unicode escape sequences as literal text. Use plain ASCII: "<=" and ">=" instead of mathematical symbols.
 7. Only stdlib or common packages (numpy, opencv-python, pillow, requests, pydantic).
-8. repoName: lowercase kebab-case, specific to the technique, never generic ("ai-tool" etc).
+8. repoName: lowercase kebab-case, specific to the technique, never generic ("ai-tool" etc). Do not reuse folder-naming conventions from a generic src/tests/examples template unless the PROJECT FORMAT specifies that.
 9. Valid JSON only, newlines escaped properly.`;
 
-  const userPrompt = `Context: ${themeContext}\n\nExact technique to implement (do not change or substitute): ${technique}\n\nBuild the full submodule around this exact technique now, following every requirement. Depth over breadth.`;
+  const userPrompt = `Context: ${themeContext}\n\nExact technique to implement (do not change or substitute): ${technique}\n\nPROJECT FORMAT for this build (shape the entire file layout, folder naming, and README tone around this — this is what must differ from any previous project): ${format.spec}\n\nBuild the full submodule now, following every requirement and matching the PROJECT FORMAT exactly. Depth over breadth.`;
 
   let res;
   try{
