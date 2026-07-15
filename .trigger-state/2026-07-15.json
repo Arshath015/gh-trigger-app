@@ -1,8 +1,9 @@
 {
   "date": "2026-07-15",
   "target": 16,
-  "done": 1,
+  "done": 2,
   "log": [
-    "gh-trigger-app: docs: add project note"
+    "gh-trigger-app: docs: add project note",
+    "EmotionGAN: docs: document installation requirements"
   ]
 }
