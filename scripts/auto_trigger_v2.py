@@ -289,7 +289,23 @@ def main():
         return
 
     remaining = state["target"] - state["done"]
-    this_run = min(MAX_PER_RUN, remaining, random.randint(1, MAX_PER_RUN))
+
+    # Adaptive pacing: figure out how many more scheduled runs are left today
+    # (cron fires every 30 min), and size this run so the target is still hit
+    # even if earlier runs were delayed or skipped by GitHub's scheduler.
+    minutes_left_in_window = max(0, (MAX_HOUR - dt.hour) * 60 - dt.minute)
+    runs_left_estimate = max(1, minutes_left_in_window // 30)
+    is_final_stretch = runs_left_estimate <= 2
+
+    if is_final_stretch:
+        # Not much time left today — do whatever it takes (within a sane per-run
+        # cap) to actually finish the daily target rather than let it slip.
+        this_run = min(remaining, 15)
+        print(f"Final stretch of the active window ({runs_left_estimate} run(s) left) — catching up with {this_run} commit(s) this run.")
+    else:
+        needed_per_run = -(-remaining // runs_left_estimate)  # ceil division
+        this_run = max(1, min(remaining, max(needed_per_run, random.randint(1, MAX_PER_RUN))))
+        print(f"~{runs_left_estimate} run(s) left in window, {remaining} commit(s) remaining — doing {this_run} this run.")
 
     repos = fetch_repos()
     if not repos:
