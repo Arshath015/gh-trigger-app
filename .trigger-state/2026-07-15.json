@@ -1,7 +1,7 @@
 {
   "date": "2026-07-15",
   "target": 16,
-  "done": 7,
+  "done": 9,
   "log": [
     "gh-trigger-app: docs: add project note",
     "EmotionGAN: docs: document installation requirements",
@@ -9,6 +9,8 @@
     "EventID-AI: docs: update changelog",
     "Handwritten-Digit-Recognition: chore: update maintenance timestamp",
     "nexus-orchestrator: chore: add maintenance timestamp footer",
-    "Exploratory-Data-Analysis-using-Python: docs: add changelog"
+    "Exploratory-Data-Analysis-using-Python: docs: add changelog",
+    "ID_card: docs: add project note",
+    "Candle-Images: chore: standardize .gitignore for project tooling"
   ]
 }
