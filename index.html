@@ -372,6 +372,7 @@ async function approveAction(){
     } else if(pending.type === 'scaffold'){
       setStatus(spinner('Creating repo & pushing files…'));
       await createRepoAndFiles(pending);
+      if(pending._technique) markTechniqueUsed(pending._technique);
       logAction(pending.repoName, `Scaffolded new project: ${pending.title}`);
       setStatus(`<div class="ok">✅ Created repo ${pending.repoName}</div>`);
     }
@@ -515,17 +516,114 @@ async function createRepoAndFiles(p){
 const AI_THEMES = {
   aiera_cad: {
     label: 'AIERA CAD module',
-    context: `AIERA CAD is an AI-powered architectural assistant that transforms furniture photos into precise 2D CAD-style technical drawings and orthographic blueprints, for architects and designers. Users upload a furniture image, generate renderings from specific angles (isometric, front, perspective), then convert designs into clean minimal line drawings. It has project history tracking, a visual workspace, and the ability to reference prior iterations as design guides. Relevant technical sub-domains: image skeletonization, computer vision edge/contour detection, threshold and binarization analysis, orthographic projection math, line simplification/vectorization, DXF/SVG export.`
+    context: `AIERA CAD is an AI-powered architectural assistant that transforms furniture photos into precise 2D CAD-style technical drawings and orthographic blueprints, for architects and designers. Users upload a furniture image, generate renderings from specific angles (isometric, front, perspective), then convert designs into clean minimal line drawings. It has project history tracking, a visual workspace, and the ability to reference prior iterations as design guides.`
   },
   aiera_creative: {
     label: 'Aiera Creative AI module',
-    context: `Aiera Creative AI Automator is a visual-first presentation designer and strategic slide generator for startups, agencies, and enterprises. It converts raw ideas, outlines, or briefs into bespoke high-contrast visual slide compositions using bento grids, KPI dashboards, interactive process flows, dynamic metrics, and editorial layouts. Relevant technical sub-domains: LLM prompt orchestration and chaining, structured JSON layout generation, design-logic/constraint solving for grid layouts, content-to-visual mapping, template scoring/ranking.`
+    context: `Aiera Creative AI Automator is a visual-first presentation designer and strategic slide generator for startups, agencies, and enterprises. It converts raw ideas, outlines, or briefs into bespoke high-contrast visual slide compositions using bento grids, KPI dashboards, interactive process flows, dynamic metrics, and editorial layouts.`
+  },
+  dsa_deep: {
+    label: 'DSA deep-dive',
+    context: `A standalone data-structures-and-algorithms deep-dive submodule — the kind of focused, well-tested implementation a strong engineer builds to demonstrate real algorithmic fluency, usable as a reusable internal utility library.`
+  },
+  math_study: {
+    label: 'Deep math study',
+    context: `A standalone applied-mathematics submodule implementing a numerical/mathematical technique from first principles — the kind of rigorous, well-tested implementation that demonstrates real mathematical and numerical-computing depth, usable as a reusable internal utility library.`
   },
   surprise: {
     label: 'Surprise me',
-    context: `Pick either the AIERA CAD (furniture photo to CAD blueprint tool, using computer vision: skeletonization, contour/edge detection, thresholding, orthographic projection) or the Aiera Creative AI Automator (LLM-driven slide/presentation generator using bento grids, KPI dashboards, layout logic) — whichever gives a more interesting standalone submodule this time.`
+    context: `A standalone technical submodule — could relate to AIERA CAD (furniture-photo-to-CAD-blueprint tool), Aiera Creative AI Automator (LLM-driven slide/presentation generator), a data-structures-and-algorithms utility, or an applied-math utility — whichever technique below leads to the most interesting standalone submodule this time.`
   }
 };
+
+// Client-side technique pools. We pick the exact technique ourselves (not the LLM)
+// so repeats are structurally impossible until a whole pool is exhausted — this is
+// what actually fixes the "always picks Zhang-Suen" problem, since leaving technique
+// choice to the model causes it to anchor on whatever example it saw most recently.
+const TECHNIQUE_POOLS = {
+  aiera_cad: [
+    "Zhang-Suen skeletonization for line-art extraction",
+    "Canny edge detection with adaptive dual-threshold tuning",
+    "Douglas-Peucker line simplification for vector cleanup",
+    "Hough transform for straight-line/edge detection in blueprints",
+    "Otsu's method for automatic image thresholding",
+    "Orthographic projection math for isometric-to-front-view conversion",
+    "Contour hierarchy extraction and nesting for CAD outlines",
+    "Marching squares for extracting shape boundaries from raster masks",
+    "Perspective transform / homography correction for angled photos",
+    "Polygon simplification via convex hull decomposition",
+    "Raster-to-vector tracing using Potrace-style curve fitting",
+    "Corner detection (Harris/Shi-Tomasi) for structural keypoints",
+  ],
+  aiera_creative: [
+    "Multi-agent LLM orchestration with retry/backoff for slide generation",
+    "Constraint-based bento-grid layout solver",
+    "Content-to-visual-hierarchy scoring and ranking engine",
+    "Structured JSON schema validation pipeline for LLM layout output",
+    "Template similarity scoring using embedding cosine distance",
+    "Prompt-chaining pipeline with intermediate critique/refinement steps",
+    "Dynamic KPI dashboard layout auto-arrangement algorithm",
+    "Text-density-aware auto-scaling for slide typography",
+    "Color-contrast accessibility scoring for generated palettes",
+    "Retry-and-repair pipeline for malformed LLM JSON output",
+  ],
+  dsa_deep: [
+    "Fenwick Tree (Binary Indexed Tree) for range sum queries",
+    "Segment Tree with lazy propagation for range updates",
+    "Union-Find (Disjoint Set) with path compression and union by rank",
+    "Trie-based autocomplete with weighted ranking",
+    "A* pathfinding with a custom admissible heuristic",
+    "Dijkstra's algorithm using a binary heap priority queue",
+    "Topological sort via Kahn's algorithm for dependency resolution",
+    "LRU cache using a doubly linked list plus hashmap",
+    "KMP string matching algorithm",
+    "Merge-sort based inversion counting",
+    "Longest Increasing Subsequence via binary search optimization",
+    "Skip List implementation for ordered set operations",
+    "Convex Hull via the Graham scan algorithm",
+    "Suffix Array construction and longest common prefix array",
+    "Bloom filter for probabilistic set membership testing",
+    "Min-heap based Huffman coding implementation",
+  ],
+  math_study: [
+    "Fast Fourier Transform (Cooley-Tukey) implemented from scratch",
+    "Newton-Raphson root finding with convergence analysis",
+    "Adaptive Simpson's rule for numerical integration",
+    "QR decomposition via Gram-Schmidt orthogonalization",
+    "Power iteration method for dominant eigenvalue estimation",
+    "Monte Carlo estimation of pi and definite integrals",
+    "Gradient descent optimizer from scratch with momentum",
+    "RSA key generation and modular exponentiation from first principles",
+    "PageRank algorithm implemented via power iteration on a graph",
+    "Bezier curve and cubic spline interpolation",
+    "Markov chain steady-state distribution computation",
+    "Pollard's rho algorithm for integer factorization",
+    "Simplex method for linear programming",
+    "Bayesian inference with conjugate priors (Beta-Binomial)",
+  ]
+};
+TECHNIQUE_POOLS.surprise = [].concat(
+  TECHNIQUE_POOLS.aiera_cad, TECHNIQUE_POOLS.aiera_creative,
+  TECHNIQUE_POOLS.dsa_deep, TECHNIQUE_POOLS.math_study
+);
+
+function getUsedTechniques(){
+  return JSON.parse(localStorage.getItem('used_techniques') || '[]');
+}
+function markTechniqueUsed(technique){
+  const used = getUsedTechniques();
+  used.push(technique);
+  localStorage.setItem('used_techniques', JSON.stringify(used.slice(-200)));
+}
+function pickUnusedTechnique(pool){
+  const used = new Set(getUsedTechniques());
+  let available = pool.filter(t => !used.has(t));
+  if(available.length === 0){
+    // Whole pool exhausted — reset so it can cycle again rather than getting stuck.
+    available = pool;
+  }
+  return available[Math.floor(Math.random() * available.length)];
+}
 
 function openAIThemePicker(){
   document.getElementById('sheetTitle').innerText = 'Generate an AI project';
@@ -551,10 +649,12 @@ async function pickAITheme(themeKey){
 
   try{
     const theme = AI_THEMES[themeKey];
-    const project = await generateAIProject(theme.context);
+    const pool = TECHNIQUE_POOLS[themeKey];
+    const technique = pickUnusedTechnique(pool);
+    const project = await generateAIProject(theme.context, technique);
     const pb = document.getElementById('previewBody');
     if(pb && pb.tagName !== 'PRE') pb.outerHTML = '<pre id="previewBody"></pre>';
-    pending = { type:'scaffold', repoName: project.repoName, title: project.title, desc: project.description, files: project.files };
+    pending = { type:'scaffold', repoName: project.repoName, title: project.title, desc: project.description, files: project.files, _technique: technique };
     showScaffoldPreview();
   } catch(e){
     document.getElementById('sheetFiles').innerHTML = `<div class="err">❌ ${e.message}</div>`;
@@ -563,7 +663,7 @@ async function pickAITheme(themeKey){
   }
 }
 
-async function generateAIProject(themeContext){
+async function generateAIProject(themeContext, technique){
   const c = cfg();
   const systemPrompt = `You are a senior engineer producing a real, portfolio-quality open-source submodule. Respond with STRICT JSON ONLY, no markdown fences, no commentary. Schema:
 {
@@ -584,7 +684,7 @@ async function generateAIProject(themeContext){
 }
 
 Requirements (be concise but real — no filler, no stubs, no "pass # TODO"):
-1. Pick ONE specific named technique from the context (e.g. "Zhang-Suen skeletonization", "map-reduce multi-agent orchestration with retry/backoff") and implement real logic for it — not a wrapper around a single library call. 3 Python modules under src/ (60-120 lines each): core algorithm, data/IO layer, orchestrator/CLI entrypoint. Use classes, type hints, docstrings.
+1. You will be given ONE exact technique to implement — use it exactly as given, do not substitute a different one. Implement real logic for it — not a wrapper around a single library call. 3 Python modules under src/ (60-120 lines each): core algorithm, data/IO layer, orchestrator/CLI entrypoint. Use classes, type hints, docstrings.
 2. 2 test files under tests/, pytest style, 2-3 real assertions each including one edge case.
 3. 1 example script under examples/, fully runnable, realistic input.
 4. 1 case_studies/*.md file: a short, specific, concrete narrative of this submodule in production use (realistic numbers, one edge case handled) — written like an internal doc, not marketing copy.
@@ -594,7 +694,7 @@ Requirements (be concise but real — no filler, no stubs, no "pass # TODO"):
 8. repoName: lowercase kebab-case, specific to the technique, never generic ("ai-tool" etc).
 9. Valid JSON only, newlines escaped properly.`;
 
-  const userPrompt = `Context: ${themeContext}\n\nInvent ONE new, specific, scoped submodule now, following every requirement. Name the exact technique first, then build files consistent with it. Depth over breadth.`;
+  const userPrompt = `Context: ${themeContext}\n\nExact technique to implement (do not change or substitute): ${technique}\n\nBuild the full submodule around this exact technique now, following every requirement. Depth over breadth.`;
 
   let res;
   try{
