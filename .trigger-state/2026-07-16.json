@@ -1,7 +1,7 @@
 {
   "date": "2026-07-16",
   "target": 22,
-  "done": 13,
+  "done": 22,
   "log": [
     "EventID-AI: chore: add maintenance timestamp footer",
     "Ekonomi: docs: add technology badges to project header",
@@ -15,6 +15,15 @@
     "EventID-AI: docs: update changelog",
     "pollard-rho-factorizer: docs: add project note",
     "altossa-streamlit-deployment: docs: add changelog",
-    "skeleton-furniture-oz95: chore: standardize .gitignore for project tooling"
+    "skeleton-furniture-oz95: chore: standardize .gitignore for project tooling",
+    "Aiera-Cad: docs: add technology badges to project header",
+    "nexus-orchestrator: docs: add changelog",
+    "Exploratory-Data-Analysis-using-Python: docs: add project note",
+    "zhang-suen-skeletonizer: docs: add project note",
+    "ID_card: docs: add technology badges to project header",
+    "Ransomware-Prediction-Bitcoin-Transactions: docs: document installation requirements",
+    "convex-hull-plugins: docs: document installation requirements",
+    "Electricity-Consumption-ML-Analysis: docs: update changelog",
+    "Ekonomi: docs: add changelog"
   ]
 }
