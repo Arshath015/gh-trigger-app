@@ -1,7 +1,7 @@
 {
   "date": "2026-07-18",
   "target": 16,
-  "done": 7,
+  "done": 9,
   "log": [
     "llm-prompt-chainer-xnwu: docs: add project note",
     "ID_card: docs: update changelog",
@@ -9,6 +9,8 @@
     "Aiera-Cad: docs: update changelog",
     "gh-trigger-app: docs: add changelog",
     "ai_chatbot: docs: add project note",
-    "Women-s-Safety-Alert-System: chore: add maintenance timestamp footer"
+    "Women-s-Safety-Alert-System: chore: add maintenance timestamp footer",
+    "skeleton-furniture-oz95: docs: add changelog",
+    "Simple-ID-Card-Generator: docs: add project note"
   ]
 }
