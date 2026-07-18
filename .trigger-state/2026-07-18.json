@@ -1,7 +1,7 @@
 {
   "date": "2026-07-18",
   "target": 16,
-  "done": 13,
+  "done": 16,
   "log": [
     "llm-prompt-chainer-xnwu: docs: add project note",
     "ID_card: docs: update changelog",
@@ -15,6 +15,9 @@
     "CortexAI: docs: add project note",
     "Women-s-Safety-Alert-System: docs: add project note",
     "Aiera-Cad: docs: add project note",
-    "Candle-Images: docs: update changelog"
+    "Candle-Images: docs: update changelog",
+    "EmotionGAN: docs: add project note",
+    "Exploratory-Data-Analysis-using-Python: docs: add project note",
+    "ID-Card-detector-and-alert-system: docs: add project note"
   ]
 }
