@@ -1,8 +1,9 @@
 {
   "date": "2026-07-18",
   "target": 16,
-  "done": 1,
+  "done": 2,
   "log": [
-    "llm-prompt-chainer-xnwu: docs: add project note"
+    "llm-prompt-chainer-xnwu: docs: add project note",
+    "ID_card: docs: update changelog"
   ]
 }
