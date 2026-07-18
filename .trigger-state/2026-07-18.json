@@ -1,7 +1,7 @@
 {
   "date": "2026-07-18",
   "target": 16,
-  "done": 11,
+  "done": 13,
   "log": [
     "llm-prompt-chainer-xnwu: docs: add project note",
     "ID_card: docs: update changelog",
@@ -13,6 +13,8 @@
     "skeleton-furniture-oz95: docs: add changelog",
     "Simple-ID-Card-Generator: docs: add project note",
     "CortexAI: docs: add project note",
-    "Women-s-Safety-Alert-System: docs: add project note"
+    "Women-s-Safety-Alert-System: docs: add project note",
+    "Aiera-Cad: docs: add project note",
+    "Candle-Images: docs: update changelog"
   ]
 }
