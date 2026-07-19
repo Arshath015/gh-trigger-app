@@ -1,7 +1,7 @@
 {
   "date": "2026-07-19",
   "target": 24,
-  "done": 8,
+  "done": 10,
   "log": [
     "Skynet-Multi-Tenet-Ops: docs: update changelog",
     "altossa-streamlit-deployment: chore: extend .gitignore with standard exclusions",
@@ -10,6 +10,8 @@
     "EmotionGAN: chore: add maintenance timestamp footer",
     "pollard-rho-factorizer: chore: add maintenance timestamp footer",
     "Front-End-Development-Clone-Project: docs: add project note",
-    "ID-Card-detector-and-alert-system: docs: update changelog"
+    "ID-Card-detector-and-alert-system: docs: update changelog",
+    "Exploratory-Data-Analysis-using-Python: docs: document installation requirements",
+    "CortexAI: docs: add technology badges to project header"
   ]
 }
