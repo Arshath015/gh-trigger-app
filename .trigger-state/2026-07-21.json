@@ -1,7 +1,7 @@
 {
   "date": "2026-07-21",
   "target": 28,
-  "done": 12,
+  "done": 27,
   "log": [
     "layout-constraint-solver: docs: add project note",
     "image-threshold-optimizer-z2y1: docs: document installation requirements",
@@ -14,6 +14,21 @@
     "Adaptive-Autonomous-Agent-with-Self-Correction-Loop: chore: update maintenance timestamp",
     "image-threshold-optimizer-z2y1: chore: add maintenance timestamp footer",
     "skeleton-furniture-oz95: docs: add project note",
-    "ID_card: docs: update changelog"
+    "ID_card: docs: update changelog",
+    "Aiera-Cad: docs: add project note",
+    "Ekonomi: docs: update changelog",
+    "Adaptive-Autonomous-Agent-with-Self-Correction-Loop: docs: update changelog",
+    "llm-prompt-chainer-xnwu: chore: update maintenance timestamp",
+    "Aiera-Cad: chore: add maintenance timestamp footer",
+    "Women-s-Safety-Alert-System: docs: update changelog",
+    "Candle-Images: docs: update changelog",
+    "Candle-Images: chore: update maintenance timestamp",
+    "ai_chatbot: docs: add project note",
+    "Ransomware-Prediction-Bitcoin-Transactions: chore: add maintenance timestamp footer",
+    "nexus-orchestrator: docs: update changelog",
+    "EventID-AI: docs: update changelog",
+    "image-threshold-optimizer-z2y1: chore: standardize .gitignore for project tooling",
+    "altossa: chore: update maintenance timestamp",
+    "EmotionGAN: docs: add project note"
   ]
 }
