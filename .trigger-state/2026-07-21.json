@@ -1,9 +1,11 @@
 {
   "date": "2026-07-21",
   "target": 28,
-  "done": 2,
+  "done": 4,
   "log": [
     "layout-constraint-solver: docs: add project note",
-    "image-threshold-optimizer-z2y1: docs: document installation requirements"
+    "image-threshold-optimizer-z2y1: docs: document installation requirements",
+    "Emotional-Intelligence-Project: docs: add changelog",
+    "Electricity-Consumption-ML-Analysis: docs: update changelog"
   ]
 }
