@@ -1,13 +1,15 @@
 {
   "date": "2026-07-22",
   "target": 12,
-  "done": 6,
+  "done": 8,
   "log": [
     "altossa: chore: extend .gitignore with standard exclusions",
     "skeletonization-tool: docs: add changelog",
     "Hospital-Voice-Agent: docs: add project note",
     "gh-trigger-app: docs: add project note",
     "image-grayscale-tool-wqk1: chore: add maintenance timestamp footer",
-    "EventID-AI: docs: update changelog"
+    "EventID-AI: docs: update changelog",
+    "kahn-sort: docs: add project note",
+    "simplex-method: docs: add project note"
   ]
 }
