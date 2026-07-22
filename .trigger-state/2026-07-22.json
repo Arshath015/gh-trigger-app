@@ -1,7 +1,7 @@
 {
   "date": "2026-07-22",
   "target": 12,
-  "done": 9,
+  "done": 10,
   "log": [
     "altossa: chore: extend .gitignore with standard exclusions",
     "skeletonization-tool: docs: add changelog",
@@ -11,6 +11,7 @@
     "EventID-AI: docs: update changelog",
     "kahn-sort: docs: add project note",
     "simplex-method: docs: add project note",
-    "pollard-rho-factorizer: docs: add changelog"
+    "pollard-rho-factorizer: docs: add changelog",
+    "Aiera-Cad: docs: add project note"
   ]
 }
