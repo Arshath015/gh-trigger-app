@@ -1,7 +1,7 @@
 {
   "date": "2026-07-23",
   "target": 30,
-  "done": 17,
+  "done": 30,
   "log": [
     "simplex-method: docs: document installation requirements",
     "llm-prompt-chainer-xnwu: docs: update changelog",
@@ -19,6 +19,19 @@
     "Front-End-Development-Clone-Project: docs: add technology badges to project header",
     "zhang-suen-skeletonizer: chore: standardize .gitignore for project tooling",
     "Ekonomi: chore: update maintenance timestamp",
-    "image-grayscale-tool-wqk1: docs: add project note"
+    "image-grayscale-tool-wqk1: docs: add project note",
+    "EmotionGAN: docs: add project note",
+    "AI-Voice-Agent: docs: add changelog",
+    "Candle-Images: docs: document installation requirements",
+    "Candle-Images: docs: add project note",
+    "Exploratory-Data-Analysis-using-Python: docs: add project note",
+    "Aiera-Cad: docs: add project note",
+    "Hospital-Voice-Agent: docs: add technology badges to project header",
+    "Adaptive-Autonomous-Agent-with-Self-Correction-Loop: docs: update changelog",
+    "Hospital-Voice-Agent: docs: add project note",
+    "Ransomware-Prediction-Bitcoin-Transactions: chore: update maintenance timestamp",
+    "ID-Card-detector-and-alert-system: chore: update maintenance timestamp",
+    "Hospital-Voice-Agent: docs: add project note",
+    "Handwritten-Digit-Recognition: docs: add project note"
   ]
 }
