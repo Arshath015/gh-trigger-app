@@ -1,9 +1,11 @@
 {
   "date": "2026-07-23",
   "target": 30,
-  "done": 2,
+  "done": 4,
   "log": [
     "simplex-method: docs: document installation requirements",
-    "llm-prompt-chainer-xnwu: docs: update changelog"
+    "llm-prompt-chainer-xnwu: docs: update changelog",
+    "image-threshold-optimizer-z2y1: docs: add project note",
+    "altossa: docs: add changelog"
   ]
 }
