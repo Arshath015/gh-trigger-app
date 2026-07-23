@@ -1,7 +1,7 @@
 {
   "date": "2026-07-23",
   "target": 30,
-  "done": 7,
+  "done": 10,
   "log": [
     "simplex-method: docs: document installation requirements",
     "llm-prompt-chainer-xnwu: docs: update changelog",
@@ -9,6 +9,9 @@
     "altossa: docs: add changelog",
     "skeletonization-tool: docs: add project note",
     "Candle-Images: docs: update changelog",
-    "pollard-rho-factorizer: docs: update changelog"
+    "pollard-rho-factorizer: docs: update changelog",
+    "Simple-ID-Card-Generator: docs: update changelog",
+    "Arshath015: docs: add changelog",
+    "pollard-rho-factorizer: chore: update maintenance timestamp"
   ]
 }
