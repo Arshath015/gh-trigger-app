@@ -1,11 +1,14 @@
 {
   "date": "2026-07-23",
   "target": 30,
-  "done": 4,
+  "done": 7,
   "log": [
     "simplex-method: docs: document installation requirements",
     "llm-prompt-chainer-xnwu: docs: update changelog",
     "image-threshold-optimizer-z2y1: docs: add project note",
-    "altossa: docs: add changelog"
+    "altossa: docs: add changelog",
+    "skeletonization-tool: docs: add project note",
+    "Candle-Images: docs: update changelog",
+    "pollard-rho-factorizer: docs: update changelog"
   ]
 }
