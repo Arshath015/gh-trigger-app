@@ -1,7 +1,7 @@
 {
   "date": "2026-07-23",
   "target": 30,
-  "done": 10,
+  "done": 17,
   "log": [
     "simplex-method: docs: document installation requirements",
     "llm-prompt-chainer-xnwu: docs: update changelog",
@@ -12,6 +12,13 @@
     "pollard-rho-factorizer: docs: update changelog",
     "Simple-ID-Card-Generator: docs: update changelog",
     "Arshath015: docs: add changelog",
-    "pollard-rho-factorizer: chore: update maintenance timestamp"
+    "pollard-rho-factorizer: chore: update maintenance timestamp",
+    "image-threshold-optimizer-z2y1: docs: add project note",
+    "layout-constraint-solver: chore: update maintenance timestamp",
+    "skeletonization-tool: chore: update maintenance timestamp",
+    "Front-End-Development-Clone-Project: docs: add technology badges to project header",
+    "zhang-suen-skeletonizer: chore: standardize .gitignore for project tooling",
+    "Ekonomi: chore: update maintenance timestamp",
+    "image-grayscale-tool-wqk1: docs: add project note"
   ]
 }
