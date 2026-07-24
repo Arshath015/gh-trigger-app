@@ -1,7 +1,7 @@
 {
   "date": "2026-07-24",
   "target": 21,
-  "done": 9,
+  "done": 12,
   "log": [
     "altossa-streamlit-deployment: docs: add project note",
     "AI-Voice-Agent: docs: add project note",
@@ -11,6 +11,9 @@
     "Handwritten-Digit-Recognition: docs: add project note",
     "kahn-sort: docs: add project note",
     "skeletonization-tool: docs: update changelog",
-    "layout-constraint-solver: docs: add changelog"
+    "layout-constraint-solver: docs: add changelog",
+    "image-threshold-optimizer-z2y1: docs: add project note",
+    "skeleton-furniture-oz95: chore: update maintenance timestamp",
+    "altossa: chore: update maintenance timestamp"
   ]
 }
