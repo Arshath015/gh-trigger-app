@@ -1,11 +1,13 @@
 {
   "date": "2026-07-24",
   "target": 21,
-  "done": 4,
+  "done": 6,
   "log": [
     "altossa-streamlit-deployment: docs: add project note",
     "AI-Voice-Agent: docs: add project note",
     "Handwritten-Digit-Recognition: chore: update maintenance timestamp",
-    "ID_card: docs: update changelog"
+    "ID_card: docs: update changelog",
+    "gh-trigger-app: docs: add project note",
+    "Handwritten-Digit-Recognition: docs: add project note"
   ]
 }
