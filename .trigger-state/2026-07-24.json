@@ -1,7 +1,7 @@
 {
   "date": "2026-07-24",
   "target": 21,
-  "done": 12,
+  "done": 21,
   "log": [
     "altossa-streamlit-deployment: docs: add project note",
     "AI-Voice-Agent: docs: add project note",
@@ -14,6 +14,15 @@
     "layout-constraint-solver: docs: add changelog",
     "image-threshold-optimizer-z2y1: docs: add project note",
     "skeleton-furniture-oz95: chore: update maintenance timestamp",
-    "altossa: chore: update maintenance timestamp"
+    "altossa: chore: update maintenance timestamp",
+    "image-grayscale-tool-wqk1: docs: add project note",
+    "simplex-method: docs: add changelog",
+    "Skynet-Multi-Tenet-Ops: docs: add project note",
+    "altossa-streamlit-deployment: docs: update changelog",
+    "llm-prompt-chainer-xnwu: docs: add project note",
+    "contour-skeletonizer: chore: standardize .gitignore for project tooling",
+    "Aiera-Cad: docs: update changelog",
+    "convex-hull-plugins: chore: standardize .gitignore for project tooling",
+    "layout-constraint-solver: docs: document installation requirements"
   ]
 }
