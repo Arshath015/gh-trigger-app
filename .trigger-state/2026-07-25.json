@@ -1,7 +1,7 @@
 {
   "date": "2026-07-25",
   "target": 14,
-  "done": 11,
+  "done": 14,
   "log": [
     "zhang-suen-skeletonizer: docs: add changelog",
     "altossa-streamlit-deployment: docs: add project note",
@@ -13,6 +13,9 @@
     "zhang-suen-skeletonizer: docs: add project note",
     "llm-prompt-chainer-xnwu: docs: update changelog",
     "Emotional-Intelligence-Project: docs: document installation requirements",
-    "Candle-Images: chore: update maintenance timestamp"
+    "Candle-Images: chore: update maintenance timestamp",
+    "Ekonomi: docs: update changelog",
+    "ID-Card-detector-and-alert-system: docs: update changelog",
+    "Handwritten-Digit-Recognition: docs: update changelog"
   ]
 }
