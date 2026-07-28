@@ -1,9 +1,11 @@
 {
   "date": "2026-07-28",
   "target": 15,
-  "done": 2,
+  "done": 4,
   "log": [
     "convex-hull-plugins: docs: update changelog",
-    "altossa-streamlit-deployment: docs: add project note"
+    "altossa-streamlit-deployment: docs: add project note",
+    "Hospital-Voice-Agent: docs: add project note",
+    "Adaptive-Autonomous-Agent-with-Self-Correction-Loop: docs: add project note"
   ]
 }
