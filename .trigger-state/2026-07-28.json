@@ -1,0 +1,9 @@
+{
+  "date": "2026-07-28",
+  "target": 15,
+  "done": 2,
+  "log": [
+    "convex-hull-plugins: docs: update changelog",
+    "altossa-streamlit-deployment: docs: add project note"
+  ]
+}
