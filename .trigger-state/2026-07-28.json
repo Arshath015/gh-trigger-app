@@ -1,7 +1,7 @@
 {
   "date": "2026-07-28",
   "target": 15,
-  "done": 7,
+  "done": 9,
   "log": [
     "convex-hull-plugins: docs: update changelog",
     "altossa-streamlit-deployment: docs: add project note",
@@ -9,6 +9,8 @@
     "Adaptive-Autonomous-Agent-with-Self-Correction-Loop: docs: add project note",
     "Front-End-Development-Clone-Project: chore: update maintenance timestamp",
     "image-grayscale-tool-wqk1: docs: add technology badges to project header",
-    "skeleton-furniture-oz95: chore: update maintenance timestamp"
+    "skeleton-furniture-oz95: chore: update maintenance timestamp",
+    "pollard-rho-factorizer: docs: update changelog",
+    "AI-Voice-Agent: docs: add project note"
   ]
 }
