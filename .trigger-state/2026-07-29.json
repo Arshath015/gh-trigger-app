@@ -1,7 +1,7 @@
 {
   "date": "2026-07-29",
   "target": 19,
-  "done": 8,
+  "done": 10,
   "log": [
     "altossa-streamlit-deployment: docs: update changelog",
     "gh-trigger-app: docs: add project note",
@@ -10,6 +10,8 @@
     "altossa: chore: update maintenance timestamp",
     "Aiera-Cad: docs: update changelog",
     "EmotionGAN: docs: add project note",
-    "Skynet-Multi-Tenet-Ops: docs: add project note"
+    "Skynet-Multi-Tenet-Ops: docs: add project note",
+    "altossa-home-curator: docs: add changelog",
+    "CortexAI: chore: extend .gitignore with standard exclusions"
   ]
 }
