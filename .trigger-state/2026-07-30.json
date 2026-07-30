@@ -1,13 +1,16 @@
 {
   "date": "2026-07-30",
   "target": 19,
-  "done": 6,
+  "done": 9,
   "log": [
     "ai_chatbot: docs: update changelog",
     "ai_chatbot: docs: add project note",
     "Ransomware-Prediction-Bitcoin-Transactions: chore: update maintenance timestamp",
     "kahn-sort: docs: add changelog",
     "newton-raphson-root-finder: docs: add project note",
-    "llm-prompt-chainer-xnwu: docs: update changelog"
+    "llm-prompt-chainer-xnwu: docs: update changelog",
+    "skeletonization-tool: docs: document installation requirements",
+    "pollard-rho-factorizer: chore: update maintenance timestamp",
+    "pollard-rho-factorizer: docs: update changelog"
   ]
 }
