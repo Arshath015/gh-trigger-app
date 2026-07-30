@@ -1,0 +1,9 @@
+{
+  "date": "2026-07-30",
+  "target": 19,
+  "done": 2,
+  "log": [
+    "ai_chatbot: docs: update changelog",
+    "ai_chatbot: docs: add project note"
+  ]
+}
