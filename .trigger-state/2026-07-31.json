@@ -1,9 +1,11 @@
 {
   "date": "2026-07-31",
   "target": 13,
-  "done": 2,
+  "done": 4,
   "log": [
     "Women-s-Safety-Alert-System: docs: add project note",
-    "simplex-method: docs: update changelog"
+    "simplex-method: docs: update changelog",
+    "Ransomware-Prediction-Bitcoin-Transactions: docs: add project note",
+    "Electricity-Consumption-ML-Analysis: chore: extend .gitignore with standard exclusions"
   ]
 }
