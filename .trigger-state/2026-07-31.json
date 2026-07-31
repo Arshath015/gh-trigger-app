@@ -1,11 +1,14 @@
 {
   "date": "2026-07-31",
   "target": 13,
-  "done": 4,
+  "done": 7,
   "log": [
     "Women-s-Safety-Alert-System: docs: add project note",
     "simplex-method: docs: update changelog",
     "Ransomware-Prediction-Bitcoin-Transactions: docs: add project note",
-    "Electricity-Consumption-ML-Analysis: chore: extend .gitignore with standard exclusions"
+    "Electricity-Consumption-ML-Analysis: chore: extend .gitignore with standard exclusions",
+    "llm-prompt-chainer-xnwu: chore: update maintenance timestamp",
+    "Ekonomi: docs: add project note",
+    "Candle-Images: docs: add project note"
   ]
 }
