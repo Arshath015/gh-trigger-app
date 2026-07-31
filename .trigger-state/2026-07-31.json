@@ -1,8 +1,9 @@
 {
   "date": "2026-07-31",
   "target": 13,
-  "done": 1,
+  "done": 2,
   "log": [
-    "Women-s-Safety-Alert-System: docs: add project note"
+    "Women-s-Safety-Alert-System: docs: add project note",
+    "simplex-method: docs: update changelog"
   ]
 }
