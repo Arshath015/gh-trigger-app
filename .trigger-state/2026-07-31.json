@@ -1,7 +1,7 @@
 {
   "date": "2026-07-31",
   "target": 13,
-  "done": 7,
+  "done": 13,
   "log": [
     "Women-s-Safety-Alert-System: docs: add project note",
     "simplex-method: docs: update changelog",
@@ -9,6 +9,12 @@
     "Electricity-Consumption-ML-Analysis: chore: extend .gitignore with standard exclusions",
     "llm-prompt-chainer-xnwu: chore: update maintenance timestamp",
     "Ekonomi: docs: add project note",
-    "Candle-Images: docs: add project note"
+    "Candle-Images: docs: add project note",
+    "skeleton-furniture-oz95: chore: update maintenance timestamp",
+    "kahn-sort: docs: update changelog",
+    "CortexAI: docs: add project note",
+    "altossa-streamlit-deployment: docs: update changelog",
+    "ai_chatbot: docs: add project note",
+    "EmotionGAN: chore: update maintenance timestamp"
   ]
 }
