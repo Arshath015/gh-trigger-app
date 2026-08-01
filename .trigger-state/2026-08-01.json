@@ -1,7 +1,7 @@
 {
   "date": "2026-08-01",
   "target": 11,
-  "done": 8,
+  "done": 11,
   "log": [
     "Aiera-Cad: chore: update maintenance timestamp",
     "ID_card: docs: update changelog",
@@ -10,6 +10,9 @@
     "image-grayscale-tool-wqk1: docs: update changelog",
     "llm-prompt-chainer-xnwu: docs: update changelog",
     "altossa: docs: update changelog",
-    "Skynet-Multi-Tenet-Ops: docs: update changelog"
+    "Skynet-Multi-Tenet-Ops: docs: update changelog",
+    "Ekonomi: docs: add project note",
+    "layout-constraint-solver: docs: update changelog",
+    "AI-Voice-Agent: docs: update changelog"
   ]
 }
