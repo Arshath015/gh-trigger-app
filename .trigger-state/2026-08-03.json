@@ -1,12 +1,13 @@
 {
   "date": "2026-08-03",
   "target": 12,
-  "done": 5,
+  "done": 6,
   "log": [
     "image-grayscale-tool-wqk1: docs: update changelog",
     "altossa-home-curator: docs: add project note",
     "image-threshold-optimizer-z2y1: docs: update changelog",
     "ai_chatbot: docs: add project note",
-    "simplex-method: docs: update changelog"
+    "simplex-method: docs: update changelog",
+    "CortexAI: docs: add project note"
   ]
 }
