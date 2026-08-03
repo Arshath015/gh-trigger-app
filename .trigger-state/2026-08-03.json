@@ -1,0 +1,10 @@
+{
+  "date": "2026-08-03",
+  "target": 12,
+  "done": 3,
+  "log": [
+    "image-grayscale-tool-wqk1: docs: update changelog",
+    "altossa-home-curator: docs: add project note",
+    "image-threshold-optimizer-z2y1: docs: update changelog"
+  ]
+}
