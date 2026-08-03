@@ -1,7 +1,7 @@
 {
   "date": "2026-08-03",
   "target": 12,
-  "done": 8,
+  "done": 12,
   "log": [
     "image-grayscale-tool-wqk1: docs: update changelog",
     "altossa-home-curator: docs: add project note",
@@ -10,6 +10,10 @@
     "simplex-method: docs: update changelog",
     "CortexAI: docs: add project note",
     "Ransomware-Prediction-Bitcoin-Transactions: docs: add project note",
-    "Electricity-Consumption-ML-Analysis: docs: update changelog"
+    "Electricity-Consumption-ML-Analysis: docs: update changelog",
+    "ID_card: docs: add project note",
+    "Electricity-Consumption-ML-Analysis: docs: add project note",
+    "ai_chatbot: docs: update changelog",
+    "Adaptive-Autonomous-Agent-with-Self-Correction-Loop: docs: update changelog"
   ]
 }
