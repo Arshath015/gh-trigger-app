@@ -1,7 +1,7 @@
 {
   "date": "2026-08-04",
   "target": 23,
-  "done": 14,
+  "done": 23,
   "log": [
     "Aiera-Cad: chore: update maintenance timestamp",
     "Ransomware-Prediction-Bitcoin-Transactions: docs: add project note",
@@ -16,6 +16,15 @@
     "CortexAI: chore: update maintenance timestamp",
     "Candle-Images: docs: add project note",
     "Ransomware-Prediction-Bitcoin-Transactions: docs: add project note",
-    "image-threshold-optimizer-z2y1: chore: update maintenance timestamp"
+    "image-threshold-optimizer-z2y1: chore: update maintenance timestamp",
+    "Simple-ID-Card-Generator: docs: add project note",
+    "altossa: docs: update changelog",
+    "newton-raphson-root-finder: docs: update changelog",
+    "newton-raphson-root-finder: chore: standardize .gitignore for project tooling",
+    "Electricity-Consumption-ML-Analysis: docs: document installation requirements",
+    "altossa-streamlit-deployment: docs: update changelog",
+    "layout-constraint-solver: docs: update changelog",
+    "image-threshold-optimizer-z2y1: docs: add project note",
+    "gh-trigger-app: docs: add project note"
   ]
 }
