@@ -1,7 +1,7 @@
 {
   "date": "2026-08-04",
   "target": 23,
-  "done": 8,
+  "done": 10,
   "log": [
     "Aiera-Cad: chore: update maintenance timestamp",
     "Ransomware-Prediction-Bitcoin-Transactions: docs: add project note",
@@ -10,6 +10,8 @@
     "Simple-ID-Card-Generator: docs: update changelog",
     "CortexAI: docs: update changelog",
     "altossa: chore: update maintenance timestamp",
-    "image-threshold-optimizer-z2y1: docs: add project note"
+    "image-threshold-optimizer-z2y1: docs: add project note",
+    "ID-Card-detector-and-alert-system: chore: update maintenance timestamp",
+    "Ekonomi: chore: update maintenance timestamp"
   ]
 }
