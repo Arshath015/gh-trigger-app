@@ -1,7 +1,7 @@
 {
   "date": "2026-08-05",
   "target": 26,
-  "done": 15,
+  "done": 26,
   "log": [
     "altossa-home-curator: docs: add project note",
     "ai_chatbot: docs: add project note",
@@ -17,6 +17,17 @@
     "Ekonomi: chore: update maintenance timestamp",
     "Candle-Images: chore: update maintenance timestamp",
     "Candle-Images: docs: update changelog",
-    "altossa-streamlit-deployment: docs: update changelog"
+    "altossa-streamlit-deployment: docs: update changelog",
+    "skeleton-furniture-oz95: docs: add project note",
+    "llm-prompt-chainer-xnwu: docs: add project note",
+    "simplex-method: docs: update changelog",
+    "altossa-streamlit-deployment: docs: add project note",
+    "Altossa-Catalog-Agent: docs: add changelog",
+    "Candle-Images: docs: add project note",
+    "Arshath015: docs: add project note",
+    "image-threshold-optimizer-z2y1: docs: add project note",
+    "Handwritten-Digit-Recognition: chore: update maintenance timestamp",
+    "pollard-rho-factorizer: docs: add project note",
+    "Hospital-Voice-Agent: chore: update maintenance timestamp"
   ]
 }
