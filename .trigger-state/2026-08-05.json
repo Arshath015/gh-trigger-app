@@ -1,9 +1,11 @@
 {
   "date": "2026-08-05",
   "target": 26,
-  "done": 2,
+  "done": 4,
   "log": [
     "altossa-home-curator: docs: add project note",
-    "ai_chatbot: docs: add project note"
+    "ai_chatbot: docs: add project note",
+    "image-grayscale-tool-wqk1: docs: update changelog",
+    "Skynet-Multi-Tenet-Ops: docs: update changelog"
   ]
 }
