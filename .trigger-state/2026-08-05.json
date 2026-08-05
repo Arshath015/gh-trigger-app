@@ -1,7 +1,7 @@
 {
   "date": "2026-08-05",
   "target": 26,
-  "done": 9,
+  "done": 15,
   "log": [
     "altossa-home-curator: docs: add project note",
     "ai_chatbot: docs: add project note",
@@ -11,6 +11,12 @@
     "skeletonization-tool: docs: add project note",
     "Adaptive-Autonomous-Agent-with-Self-Correction-Loop: docs: add project note",
     "zhang-suen-skeletonizer: chore: add maintenance timestamp footer",
-    "convex-hull-plugins: chore: update maintenance timestamp"
+    "convex-hull-plugins: chore: update maintenance timestamp",
+    "Ekonomi: docs: update changelog",
+    "AI-Voice-Agent: docs: add project note",
+    "Ekonomi: chore: update maintenance timestamp",
+    "Candle-Images: chore: update maintenance timestamp",
+    "Candle-Images: docs: update changelog",
+    "altossa-streamlit-deployment: docs: update changelog"
   ]
 }
