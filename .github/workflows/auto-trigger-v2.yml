@@ -30,9 +30,11 @@ jobs:
           GH_USER: ${{ secrets.GH_USER }}
           GH_TOKEN: ${{ secrets.GH_PAT }}
           OFF_DAYS: ${{ vars.OFF_DAYS }}
+          OFF_DATES: ${{ vars.OFF_DATES }}
           MIN_HOUR: ${{ vars.MIN_HOUR }}
           MAX_HOUR: ${{ vars.MAX_HOUR }}
           MIN_COMMITS: ${{ vars.MIN_COMMITS }}
           MAX_COMMITS: ${{ vars.MAX_COMMITS }}
           MAX_PER_RUN: ${{ vars.MAX_PER_RUN }}
+          EXCLUDED_REPOS: ${{ vars.EXCLUDED_REPOS }}
         run: python scripts/auto_trigger_v2.py
