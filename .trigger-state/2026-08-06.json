@@ -1,12 +1,14 @@
 {
   "date": "2026-08-06",
   "target": 15,
-  "done": 5,
+  "done": 7,
   "log": [
     "convex-hull-plugins: docs: update changelog",
     "contour-skeletonizer: docs: add project note",
     "Exploratory-Data-Analysis-using-Python: docs: update changelog",
     "altossa-home-curator: docs: add project note",
-    "simplex-method: chore: add maintenance timestamp footer"
+    "simplex-method: chore: add maintenance timestamp footer",
+    "llm-prompt-chainer-xnwu: docs: add project note",
+    "Aiera-Cad: chore: update maintenance timestamp"
   ]
 }
