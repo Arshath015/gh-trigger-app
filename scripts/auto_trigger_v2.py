@@ -41,9 +41,20 @@ if not SELF_OWNER:
 OFF_DAYS = os.environ.get("OFF_DAYS", "").strip()
 OFF_DAYS_SET = {int(d) for d in OFF_DAYS.split(",") if d.strip() != ""}
 
+# Comma-separated specific calendar dates to skip entirely, format YYYY-MM-DD.
+# Set/managed via the app's Setup tab (writes to the OFF_DATES repo variable), or manually.
+OFF_DATES = os.environ.get("OFF_DATES", "").strip()
+OFF_DATES_SET = {d.strip() for d in OFF_DATES.split(",") if d.strip() != ""}
+
+# Comma-separated repo names that should NEVER be touched by the trigger, e.g.
+# "Altossa-Catalog-Agent,some-other-repo". Set via the EXCLUDED_REPOS repo variable.
+EXCLUDED_REPOS = {
+    r.strip().lower() for r in os.environ.get("EXCLUDED_REPOS", "").split(",") if r.strip()
+}
+
 MIN_HOUR = int(os.environ.get("MIN_HOUR", "9") or 9)
 MAX_HOUR = int(os.environ.get("MAX_HOUR", "22") or 22)
-MIN_COMMITS = int(os.environ.get("MIN_COMMITS", "5") or 5)
+MIN_COMMITS = int(os.environ.get("MIN_COMMITS", "1") or 1)
 MAX_COMMITS = int(os.environ.get("MAX_COMMITS", "30") or 30)
 # Max commits attempted in a single run (spreads load across the day instead of bursting).
 MAX_PER_RUN = int(os.environ.get("MAX_PER_RUN", "3") or 3)
@@ -64,7 +75,10 @@ def fetch_repos():
         f"{API}/user/repos", headers=auth_headers(), params={"per_page": 100, "affiliation": "owner"}
     )
     res.raise_for_status()
-    return [r for r in res.json() if not r.get("archived")]
+    return [
+        r for r in res.json()
+        if not r.get("archived") and r["name"].lower() not in EXCLUDED_REPOS
+    ]
 
 
 def get_file(owner, repo, path):
@@ -274,7 +288,11 @@ def main():
     print(f"Current IST time: {dt.strftime('%Y-%m-%d %H:%M')} (weekday {dt.weekday()})")
 
     if dt.weekday() in OFF_DAYS_SET:
-        print("Today is configured as an off day. Skipping.")
+        print("Today is configured as an off day (weekday pattern). Skipping.")
+        return
+
+    if dt.strftime("%Y-%m-%d") in OFF_DATES_SET:
+        print(f"{dt.strftime('%Y-%m-%d')} is configured as a specific off-date. Skipping.")
         return
 
     if dt.hour < MIN_HOUR or dt.hour > MAX_HOUR:
