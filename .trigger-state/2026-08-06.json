@@ -1,11 +1,12 @@
 {
   "date": "2026-08-06",
   "target": 15,
-  "done": 4,
+  "done": 5,
   "log": [
     "convex-hull-plugins: docs: update changelog",
     "contour-skeletonizer: docs: add project note",
     "Exploratory-Data-Analysis-using-Python: docs: update changelog",
-    "altossa-home-curator: docs: add project note"
+    "altossa-home-curator: docs: add project note",
+    "simplex-method: chore: add maintenance timestamp footer"
   ]
 }
