@@ -173,8 +173,21 @@
       <input id="ghToken" type="password" placeholder="ghp_xxxxxxxxxxxx">
       <label>Groq API Key (for AI Project Generator)</label>
       <input id="groqKey" type="password" placeholder="gsk_xxxxxxxxxxxx">
+      <label>Excluded Repos (comma-separated, never touched)</label>
+      <input id="excludedRepos" placeholder="Altossa-Catalog-Agent, another-repo">
+      <label>Automation Repo (where the scheduler lives)</label>
+      <input id="automationRepo" placeholder="gh-trigger-app">
       <button class="btn-secondary" onclick="saveConfig()"><span class="btn-icon">💾</span> Save Config</button>
       <div class="muted" id="configStatus">Stored only in this browser, on this device.</div>
+    </div>
+
+    <div class="card">
+      <div class="section-title">Off Days (specific dates)</div>
+      <label>Pick a date the scheduler should skip entirely</label>
+      <input id="offDateInput" type="date">
+      <button class="btn-secondary" onclick="addOffDate()"><span class="btn-icon">➕</span> Add Off Day</button>
+      <div id="offDatesStatus" class="muted"></div>
+      <div id="offDatesList" style="margin-top:8px;"></div>
     </div>
   </div>
 
@@ -225,6 +238,7 @@ function switchTab(name){
   document.getElementById('tabHistory').classList.toggle('active', name==='history');
   document.getElementById('tabSetup').classList.toggle('active', name==='setup');
   if(name==='history') renderHistory();
+  if(name==='setup') renderOffDates();
 }
 
 function cfg(){ return { user: localStorage.getItem('gh_user')||'', token: localStorage.getItem('gh_token')||'', groq: localStorage.getItem('groq_key')||'' }; }
@@ -232,6 +246,8 @@ function saveConfig(){
   localStorage.setItem('gh_user', document.getElementById('ghUser').value.trim());
   localStorage.setItem('gh_token', document.getElementById('ghToken').value.trim());
   localStorage.setItem('groq_key', document.getElementById('groqKey').value.trim());
+  localStorage.setItem('excluded_repos', document.getElementById('excludedRepos').value.trim());
+  localStorage.setItem('automation_repo', document.getElementById('automationRepo').value.trim() || 'gh-trigger-app');
   document.getElementById('configStatus').innerHTML = '<span class="ok">Saved ✓</span> — stored only in this browser.';
 }
 (function initFields(){
@@ -239,6 +255,8 @@ function saveConfig(){
   document.getElementById('ghUser').value = c.user;
   document.getElementById('ghToken').value = c.token;
   document.getElementById('groqKey').value = c.groq;
+  document.getElementById('excludedRepos').value = localStorage.getItem('excluded_repos') || '';
+  document.getElementById('automationRepo').value = localStorage.getItem('automation_repo') || 'gh-trigger-app';
   if(!c.user || !c.token) switchTab('setup');
 })();
 
@@ -250,6 +268,86 @@ function setStatus(html){ document.getElementById('statusCard').innerHTML = html
 function spinner(msg){ return `<div class="spinner-wrap"><div class="spin"></div>${msg}</div>`; }
 function b64EncodeUnicode(str){ return btoa(unescape(encodeURIComponent(str))); }
 function b64DecodeUnicode(str){ return decodeURIComponent(escape(atob(str))); }
+
+function getAutomationRepo(){
+  return localStorage.getItem('automation_repo') || 'gh-trigger-app';
+}
+
+async function fetchOffDates(){
+  const c = cfg();
+  const repo = getAutomationRepo();
+  const res = await fetch(`${API}/repos/${c.user}/${repo}/actions/variables/OFF_DATES`, {headers: authHeaders()});
+  if(res.status === 404) return [];
+  if(!res.ok) throw new Error(`Could not read OFF_DATES (${res.status}). Check your token has 'repo' scope and the automation repo name is correct.`);
+  const data = await res.json();
+  return data.value.split(',').map(s => s.trim()).filter(Boolean);
+}
+
+async function saveOffDates(dates){
+  const c = cfg();
+  const repo = getAutomationRepo();
+  const value = dates.join(',');
+  const checkRes = await fetch(`${API}/repos/${c.user}/${repo}/actions/variables/OFF_DATES`, {headers: authHeaders()});
+  const exists = checkRes.status !== 404;
+  const url = exists
+    ? `${API}/repos/${c.user}/${repo}/actions/variables/OFF_DATES`
+    : `${API}/repos/${c.user}/${repo}/actions/variables`;
+  const method = exists ? 'PATCH' : 'POST';
+  const body = exists ? { name: 'OFF_DATES', value } : { name: 'OFF_DATES', value };
+  const res = await fetch(url, { method, headers: {...authHeaders(), 'Content-Type':'application/json'}, body: JSON.stringify(body) });
+  if(!res.ok){ const t = await res.text(); throw new Error(`Failed to save off-dates (${res.status}): ${t}`); }
+}
+
+async function renderOffDates(){
+  const listEl = document.getElementById('offDatesList');
+  const statusEl = document.getElementById('offDatesStatus');
+  const c = cfg();
+  if(!c.user || !c.token){ listEl.innerHTML = ''; return; }
+  statusEl.innerHTML = 'Loading…';
+  try{
+    const dates = await fetchOffDates();
+    statusEl.innerHTML = '';
+    if(dates.length === 0){ listEl.innerHTML = '<div class="muted">No off-days set.</div>'; return; }
+    listEl.innerHTML = dates.sort().map(d =>
+      `<div class="log-item"><div class="log-repo" style="flex:1;">${d}</div><button class="btn-flat" style="width:auto;padding:6px 12px;margin:0;" onclick="removeOffDate('${d}')">✕</button></div>`
+    ).join('');
+  } catch(e){
+    statusEl.innerHTML = `<span class="err">${e.message}</span>`;
+  }
+}
+
+async function addOffDate(){
+  const input = document.getElementById('offDateInput');
+  const date = input.value;
+  if(!date){ document.getElementById('offDatesStatus').innerHTML = '<span class="err">Pick a date first.</span>'; return; }
+  document.getElementById('offDatesStatus').innerHTML = 'Saving…';
+  try{
+    const dates = await fetchOffDates();
+    if(!dates.includes(date)) dates.push(date);
+    await saveOffDates(dates);
+    input.value = '';
+    document.getElementById('offDatesStatus').innerHTML = '<span class="ok">Saved ✓</span>';
+    renderOffDates();
+  } catch(e){
+    document.getElementById('offDatesStatus').innerHTML = `<span class="err">${e.message}</span>`;
+  }
+}
+
+async function removeOffDate(date){
+  document.getElementById('offDatesStatus').innerHTML = 'Removing…';
+  try{
+    const dates = (await fetchOffDates()).filter(d => d !== date);
+    await saveOffDates(dates);
+    document.getElementById('offDatesStatus').innerHTML = '<span class="ok">Removed ✓</span>';
+    renderOffDates();
+  } catch(e){
+    document.getElementById('offDatesStatus').innerHTML = `<span class="err">${e.message}</span>`;
+  }
+}
+
+function getExcludedRepos(){
+  return (localStorage.getItem('excluded_repos') || '').split(',').map(s => s.trim().toLowerCase()).filter(Boolean);
+}
 
 async function fetchRepos(){
   const c = cfg();
@@ -263,7 +361,8 @@ async function fetchRepos(){
   if(res.status === 401) throw new Error("401 Bad credentials — token invalid/expired. Generate a new classic token with 'repo' scope.");
   if(!res.ok) throw new Error(`GitHub API error ${res.status}: ${await res.text()}`);
   const repos = await res.json();
-  return repos.filter(r => !r.archived);
+  const excluded = getExcludedRepos();
+  return repos.filter(r => !r.archived && !excluded.includes(r.name.toLowerCase()));
 }
 
 async function getFile(owner, repo, path){
