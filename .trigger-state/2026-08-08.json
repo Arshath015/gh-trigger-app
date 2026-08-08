@@ -1,13 +1,14 @@
 {
   "date": "2026-08-08",
   "target": 8,
-  "done": 6,
+  "done": 7,
   "log": [
     "ID-Card-detector-and-alert-system: docs: update changelog",
     "contour-skeletonizer: docs: add project note",
     "kahn-sort: chore: add maintenance timestamp footer",
     "Hospital-Voice-Agent: docs: add project note",
     "zhang-suen-skeletonizer: docs: add project note",
-    "layout-constraint-solver: docs: add project note"
+    "layout-constraint-solver: docs: add project note",
+    "Handwritten-Digit-Recognition: docs: update changelog"
   ]
 }
