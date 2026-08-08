@@ -1,7 +1,7 @@
 {
   "date": "2026-08-08",
   "target": 8,
-  "done": 7,
+  "done": 8,
   "log": [
     "ID-Card-detector-and-alert-system: docs: update changelog",
     "contour-skeletonizer: docs: add project note",
@@ -9,6 +9,7 @@
     "Hospital-Voice-Agent: docs: add project note",
     "zhang-suen-skeletonizer: docs: add project note",
     "layout-constraint-solver: docs: add project note",
-    "Handwritten-Digit-Recognition: docs: update changelog"
+    "Handwritten-Digit-Recognition: docs: update changelog",
+    "Ekonomi: docs: add project note"
   ]
 }
