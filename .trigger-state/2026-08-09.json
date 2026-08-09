@@ -1,7 +1,7 @@
 {
   "date": "2026-08-09",
   "target": 19,
-  "done": 15,
+  "done": 18,
   "log": [
     "altossa-streamlit-deployment: docs: add project note",
     "kahn-sort: chore: update maintenance timestamp",
@@ -17,6 +17,9 @@
     "altossa-streamlit-deployment: docs: update changelog",
     "convex-hull-plugins: docs: add project note",
     "skeletonization-tool: chore: update maintenance timestamp",
-    "altossa-streamlit-deployment: docs: add project note"
+    "altossa-streamlit-deployment: docs: add project note",
+    "Ransomware-Prediction-Bitcoin-Transactions: docs: add changelog",
+    "image-threshold-optimizer-z2y1: docs: add project note",
+    "llm-prompt-chainer-xnwu: docs: update changelog"
   ]
 }
