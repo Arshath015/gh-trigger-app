@@ -1,7 +1,7 @@
 {
   "date": "2026-08-10",
   "target": 25,
-  "done": 15,
+  "done": 19,
   "log": [
     "Emotional-Intelligence-Project: docs: update changelog",
     "trie-autocomplete: docs: add changelog",
@@ -17,6 +17,10 @@
     "CortexAI: chore: update maintenance timestamp",
     "Women-s-Safety-Alert-System: docs: add project note",
     "Arshath015: docs: add project note",
-    "ID-Card-detector-and-alert-system: chore: standardize .gitignore for project tooling"
+    "ID-Card-detector-and-alert-system: chore: standardize .gitignore for project tooling",
+    "skeletonization-tool: docs: update changelog",
+    "gh-trigger-app: docs: add project note",
+    "Handwritten-Digit-Recognition: docs: document installation requirements",
+    "ID_card: docs: add project note"
   ]
 }
