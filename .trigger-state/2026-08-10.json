@@ -1,10 +1,12 @@
 {
   "date": "2026-08-10",
   "target": 25,
-  "done": 3,
+  "done": 5,
   "log": [
     "Emotional-Intelligence-Project: docs: update changelog",
     "trie-autocomplete: docs: add changelog",
-    "Ransomware-Prediction-Bitcoin-Transactions: chore: update maintenance timestamp"
+    "Ransomware-Prediction-Bitcoin-Transactions: chore: update maintenance timestamp",
+    "Ekonomi: chore: update maintenance timestamp",
+    "simplex-method: chore: update maintenance timestamp"
   ]
 }
