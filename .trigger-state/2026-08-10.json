@@ -1,7 +1,7 @@
 {
   "date": "2026-08-10",
   "target": 25,
-  "done": 19,
+  "done": 25,
   "log": [
     "Emotional-Intelligence-Project: docs: update changelog",
     "trie-autocomplete: docs: add changelog",
@@ -21,6 +21,12 @@
     "skeletonization-tool: docs: update changelog",
     "gh-trigger-app: docs: add project note",
     "Handwritten-Digit-Recognition: docs: document installation requirements",
-    "ID_card: docs: add project note"
+    "ID_card: docs: add project note",
+    "Altossa-Catalog-Agent: chore: extend .gitignore with standard exclusions",
+    "Arshath015: docs: update changelog",
+    "contour-skeletonizer: chore: update maintenance timestamp",
+    "pollard-rho-factorizer: docs: update changelog",
+    "image-grayscale-tool-wqk1: docs: add project note",
+    "skeleton-furniture-oz95: docs: update changelog"
   ]
 }
