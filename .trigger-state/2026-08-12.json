@@ -1,7 +1,7 @@
 {
   "date": "2026-08-12",
   "target": 22,
-  "done": 15,
+  "done": 18,
   "log": [
     "Emotional-Intelligence-Project: chore: update maintenance timestamp",
     "convex-hull-plugins: docs: add project note",
@@ -17,6 +17,9 @@
     "altossa-streamlit-deployment: docs: add project note",
     "llm-prompt-chainer-xnwu: docs: update changelog",
     "ID-Card-detector-and-alert-system: docs: add project note",
-    "image-threshold-optimizer-z2y1: docs: add project note"
+    "image-threshold-optimizer-z2y1: docs: add project note",
+    "Front-End-Development-Clone-Project: chore: update maintenance timestamp",
+    "pollard-rho-factorizer: docs: update changelog",
+    "Handwritten-Digit-Recognition: docs: update changelog"
   ]
 }
