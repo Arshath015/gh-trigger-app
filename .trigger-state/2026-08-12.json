@@ -1,7 +1,7 @@
 {
   "date": "2026-08-12",
   "target": 22,
-  "done": 7,
+  "done": 9,
   "log": [
     "Emotional-Intelligence-Project: chore: update maintenance timestamp",
     "convex-hull-plugins: docs: add project note",
@@ -9,6 +9,8 @@
     "Ransomware-Prediction-Bitcoin-Transactions: docs: update changelog",
     "Adaptive-Autonomous-Agent-with-Self-Correction-Loop: docs: add project note",
     "convex-hull-plugins: docs: add project note",
-    "altossa-home-curator: chore: update maintenance timestamp"
+    "altossa-home-curator: chore: update maintenance timestamp",
+    "newton-raphson-root-finder: docs: document installation requirements",
+    "Hospital-Voice-Agent: docs: add project note"
   ]
 }
