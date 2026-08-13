@@ -1,7 +1,7 @@
 {
   "date": "2026-08-13",
   "target": 21,
-  "done": 9,
+  "done": 12,
   "log": [
     "trie-autocomplete: docs: add project note",
     "pollard-rho-factorizer: docs: add project note",
@@ -11,6 +11,9 @@
     "image-grayscale-tool-wqk1: chore: update maintenance timestamp",
     "altossa: chore: update maintenance timestamp",
     "ai_chatbot: docs: update changelog",
-    "contour-skeletonizer: chore: update maintenance timestamp"
+    "contour-skeletonizer: chore: update maintenance timestamp",
+    "Aiera-Cad: docs: add project note",
+    "AI-Voice-Agent: docs: add project note",
+    "AI-Voice-Agent: chore: update maintenance timestamp"
   ]
 }
