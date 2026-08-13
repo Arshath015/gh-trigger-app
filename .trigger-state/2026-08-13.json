@@ -1,11 +1,12 @@
 {
   "date": "2026-08-13",
   "target": 21,
-  "done": 4,
+  "done": 5,
   "log": [
     "trie-autocomplete: docs: add project note",
     "pollard-rho-factorizer: docs: add project note",
     "kahn-sort: docs: add project note",
-    "zhang-suen-skeletonizer: docs: add project note"
+    "zhang-suen-skeletonizer: docs: add project note",
+    "trie-autocomplete: chore: standardize .gitignore for project tooling"
   ]
 }
