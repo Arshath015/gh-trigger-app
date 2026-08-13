@@ -1,7 +1,7 @@
 {
   "date": "2026-08-13",
   "target": 21,
-  "done": 17,
+  "done": 21,
   "log": [
     "trie-autocomplete: docs: add project note",
     "pollard-rho-factorizer: docs: add project note",
@@ -19,6 +19,10 @@
     "EventID-AI: chore: update maintenance timestamp",
     "ai_chatbot: docs: add project note",
     "nexus-orchestrator: docs: add project note",
-    "layout-constraint-solver: docs: add project note"
+    "layout-constraint-solver: docs: add project note",
+    "pollard-rho-factorizer: docs: add project note",
+    "skeleton-furniture-oz95: docs: update changelog",
+    "Ekonomi: docs: update changelog",
+    "AI-Voice-Agent: docs: add project note"
   ]
 }
