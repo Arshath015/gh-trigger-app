@@ -1,7 +1,7 @@
 {
   "date": "2026-08-13",
   "target": 21,
-  "done": 12,
+  "done": 14,
   "log": [
     "trie-autocomplete: docs: add project note",
     "pollard-rho-factorizer: docs: add project note",
@@ -14,6 +14,8 @@
     "contour-skeletonizer: chore: update maintenance timestamp",
     "Aiera-Cad: docs: add project note",
     "AI-Voice-Agent: docs: add project note",
-    "AI-Voice-Agent: chore: update maintenance timestamp"
+    "AI-Voice-Agent: chore: update maintenance timestamp",
+    "Exploratory-Data-Analysis-using-Python: docs: update changelog",
+    "EventID-AI: chore: update maintenance timestamp"
   ]
 }
