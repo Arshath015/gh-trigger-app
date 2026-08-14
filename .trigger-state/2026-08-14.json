@@ -1,10 +1,13 @@
 {
   "date": "2026-08-14",
   "target": 24,
-  "done": 3,
+  "done": 6,
   "log": [
     "Handwritten-Digit-Recognition: chore: update maintenance timestamp",
     "image-grayscale-tool-wqk1: chore: update maintenance timestamp",
-    "Hospital-Voice-Agent: docs: add project note"
+    "Hospital-Voice-Agent: docs: add project note",
+    "Candle-Images: docs: add project note",
+    "zhang-suen-skeletonizer: docs: add project note",
+    "skeletonization-tool: docs: add project note"
   ]
 }
