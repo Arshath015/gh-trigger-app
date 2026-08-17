@@ -1,12 +1,14 @@
 {
   "date": "2026-08-17",
   "target": 7,
-  "done": 5,
+  "done": 7,
   "log": [
     "convex-hull-plugins: docs: update changelog",
     "Electricity-Consumption-ML-Analysis: docs: add project note",
     "ID-Card-detector-and-alert-system: chore: update maintenance timestamp",
     "llm-prompt-chainer-xnwu: docs: add project note",
-    "Emotional-Intelligence-Project: chore: update maintenance timestamp"
+    "Emotional-Intelligence-Project: chore: update maintenance timestamp",
+    "Exploratory-Data-Analysis-using-Python: docs: add project note",
+    "newton-raphson-root-finder: docs: update changelog"
   ]
 }
