@@ -850,13 +850,14 @@ Requirements (be concise but real — no filler, no stubs, no "pass # TODO"):
       method: 'POST',
       headers: { 'Authorization': 'Bearer ' + c.groq, 'Content-Type': 'application/json' },
       body: JSON.stringify({
-        model: 'llama-3.3-70b-versatile',
+        model: 'openai/gpt-oss-120b',
         messages: [
           { role: 'system', content: systemPrompt },
           { role: 'user', content: userPrompt }
         ],
         temperature: 0.85,
-        max_tokens: 4000,
+        max_tokens: 4500,
+        reasoning_effort: 'low',
         response_format: { type: 'json_object' }
       })
     });
