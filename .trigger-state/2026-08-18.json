@@ -1,7 +1,7 @@
 {
   "date": "2026-08-18",
   "target": 21,
-  "done": 20,
+  "done": 21,
   "log": [
     "image-grayscale-tool-wqk1: chore: update maintenance timestamp",
     "altossa: docs: update changelog",
@@ -22,6 +22,7 @@
     "kahn-sort: chore: update maintenance timestamp",
     "llm-prompt-chainer-xnwu: docs: update changelog",
     "Altossa-Catalog-Agent: docs: add project note",
-    "Aiera-Cad: chore: update maintenance timestamp"
+    "Aiera-Cad: chore: update maintenance timestamp",
+    "simplex-method: docs: add project note"
   ]
 }
