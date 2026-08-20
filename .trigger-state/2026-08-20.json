@@ -1,7 +1,7 @@
 {
   "date": "2026-08-20",
   "target": 29,
-  "done": 11,
+  "done": 14,
   "log": [
     "image-grayscale-tool-wqk1: docs: update changelog",
     "ID-Card-detector-and-alert-system: docs: update changelog",
@@ -13,6 +13,9 @@
     "skeletonization-tool: chore: update maintenance timestamp",
     "Exploratory-Data-Analysis-using-Python: chore: update maintenance timestamp",
     "Handwritten-Digit-Recognition: docs: update changelog",
-    "Skynet-Multi-Tenet-Ops: chore: update maintenance timestamp"
+    "Skynet-Multi-Tenet-Ops: chore: update maintenance timestamp",
+    "simplex-method: chore: update maintenance timestamp",
+    "llm-prompt-chainer-xnwu: docs: update changelog",
+    "altossa-home-curator: docs: update changelog"
   ]
 }
