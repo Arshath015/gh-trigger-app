@@ -1,7 +1,7 @@
 {
   "date": "2026-08-21",
   "target": 22,
-  "done": 20,
+  "done": 22,
   "log": [
     "skeleton-furniture-oz95: docs: add project note",
     "skeleton-furniture-oz95: chore: update maintenance timestamp",
@@ -22,6 +22,8 @@
     "ai_chatbot: docs: update changelog",
     "Hospital-Voice-Agent: docs: add project note",
     "ID_card: docs: update changelog",
-    "layout-constraint-solver: docs: update changelog"
+    "layout-constraint-solver: docs: update changelog",
+    "altossa-home-curator: docs: update changelog",
+    "Candle-Images: chore: update maintenance timestamp"
   ]
 }
