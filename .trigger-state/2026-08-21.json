@@ -1,11 +1,13 @@
 {
   "date": "2026-08-21",
   "target": 22,
-  "done": 4,
+  "done": 6,
   "log": [
     "skeleton-furniture-oz95: docs: add project note",
     "skeleton-furniture-oz95: chore: update maintenance timestamp",
     "zhang-suen-skeletonizer: docs: add project note",
-    "CortexAI: chore: update maintenance timestamp"
+    "CortexAI: chore: update maintenance timestamp",
+    "simplex-method: docs: add project note",
+    "skeleton-furniture-oz95: docs: add project note"
   ]
 }
