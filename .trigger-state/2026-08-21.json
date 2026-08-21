@@ -1,7 +1,7 @@
 {
   "date": "2026-08-21",
   "target": 22,
-  "done": 12,
+  "done": 14,
   "log": [
     "skeleton-furniture-oz95: docs: add project note",
     "skeleton-furniture-oz95: chore: update maintenance timestamp",
@@ -14,6 +14,8 @@
     "Women-s-Safety-Alert-System: docs: update changelog",
     "Ransomware-Prediction-Bitcoin-Transactions: chore: update maintenance timestamp",
     "pollard-rho-factorizer: docs: update changelog",
-    "Altossa-Catalog-Agent: docs: update changelog"
+    "Altossa-Catalog-Agent: docs: update changelog",
+    "trie-autocomplete: docs: add project note",
+    "Handwritten-Digit-Recognition: docs: add project note"
   ]
 }
