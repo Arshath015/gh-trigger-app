@@ -1,10 +1,12 @@
 {
   "date": "2026-08-23",
   "target": 19,
-  "done": 3,
+  "done": 5,
   "log": [
     "llm-prompt-chainer-xnwu: chore: update maintenance timestamp",
     "Adaptive-Autonomous-Agent-with-Self-Correction-Loop: docs: update changelog",
-    "Hospital-Voice-Agent: docs: update changelog"
+    "Hospital-Voice-Agent: docs: update changelog",
+    "Simple-ID-Card-Generator: docs: update changelog",
+    "kahn-sort: docs: update changelog"
   ]
 }
