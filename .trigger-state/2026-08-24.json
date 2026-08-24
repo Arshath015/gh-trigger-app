@@ -1,10 +1,13 @@
 {
   "date": "2026-08-24",
   "target": 12,
-  "done": 3,
+  "done": 6,
   "log": [
     "Candle-Images: docs: add project note",
     "EmotionGAN: chore: update maintenance timestamp",
-    "altossa-streamlit-deployment: docs: add project note"
+    "altossa-streamlit-deployment: docs: add project note",
+    "Simple-ID-Card-Generator: docs: update changelog",
+    "convex-hull-plugins: docs: add project note",
+    "pollard-rho-factorizer: docs: update changelog"
   ]
 }
