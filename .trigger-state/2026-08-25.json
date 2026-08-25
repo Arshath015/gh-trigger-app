@@ -1,7 +1,7 @@
 {
   "date": "2026-08-25",
   "target": 23,
-  "done": 16,
+  "done": 19,
   "log": [
     "simplex-method: chore: standardize .gitignore for project tooling",
     "altossa-home-curator: docs: add project note",
@@ -18,6 +18,9 @@
     "contour-skeletonizer: chore: update maintenance timestamp",
     "image-threshold-optimizer-z2y1: docs: add project note",
     "simplex-method: docs: update changelog",
-    "ErvAI: docs: update changelog"
+    "ErvAI: docs: update changelog",
+    "zhang-suen-skeletonizer: chore: update maintenance timestamp",
+    "CortexAI: chore: update maintenance timestamp",
+    "ErvAI: chore: extend .gitignore with standard exclusions"
   ]
 }
