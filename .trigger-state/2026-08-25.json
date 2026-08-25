@@ -1,7 +1,7 @@
 {
   "date": "2026-08-25",
   "target": 23,
-  "done": 13,
+  "done": 14,
   "log": [
     "simplex-method: chore: standardize .gitignore for project tooling",
     "altossa-home-curator: docs: add project note",
@@ -15,6 +15,7 @@
     "trie-autocomplete: docs: document installation requirements",
     "kahn-sort: docs: update changelog",
     "ErvAI: chore: add maintenance timestamp footer",
-    "contour-skeletonizer: chore: update maintenance timestamp"
+    "contour-skeletonizer: chore: update maintenance timestamp",
+    "image-threshold-optimizer-z2y1: docs: add project note"
   ]
 }
