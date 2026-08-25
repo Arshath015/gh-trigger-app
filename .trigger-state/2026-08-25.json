@@ -1,8 +1,9 @@
 {
   "date": "2026-08-25",
   "target": 23,
-  "done": 1,
+  "done": 2,
   "log": [
-    "simplex-method: chore: standardize .gitignore for project tooling"
+    "simplex-method: chore: standardize .gitignore for project tooling",
+    "altossa-home-curator: docs: add project note"
   ]
 }
