@@ -1,8 +1,14 @@
 {
   "date": "2026-08-29",
   "target": 7,
-  "done": 1,
+  "done": 7,
   "log": [
-    "altossa-home-curator: chore: update maintenance timestamp"
+    "altossa-home-curator: chore: update maintenance timestamp",
+    "image-threshold-optimizer-z2y1: docs: update changelog",
+    "skeletonization-tool: docs: add project note",
+    "layout-constraint-solver: docs: add project note",
+    "Ekonomi: docs: update changelog",
+    "Aiera-Cad: chore: update maintenance timestamp",
+    "CortexAI: docs: add project note"
   ]
 }
