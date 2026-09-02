@@ -1,9 +1,12 @@
 {
   "date": "2026-09-02",
   "target": 16,
-  "done": 2,
+  "done": 5,
   "log": [
     "Emotional-Intelligence-Project: docs: add project note",
-    "skeletonization-tool: docs: add project note"
+    "skeletonization-tool: docs: add project note",
+    "Exploratory-Data-Analysis-using-Python: docs: update changelog",
+    "Electricity-Consumption-ML-Analysis: docs: update changelog",
+    "altossa-home-curator: docs: add technology badges to project header"
   ]
 }
