@@ -1,0 +1,10 @@
+{
+  "date": "2026-09-15",
+  "target": 24,
+  "done": 3,
+  "log": [
+    "convex-hull-plugins: docs: update changelog",
+    "gh-trigger-app: docs: add project note",
+    "altossa-home-curator: docs: update changelog"
+  ]
+}
