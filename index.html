@@ -682,6 +682,9 @@ jobs:
           if [ -z "$example_file" ]; then
             example_file=$(find . -path ./node_modules -prune -o -iname "*.py" -path "*demo*" -print -quit)
           fi
+          if [ -z "$example_file" ]; then
+            example_file=$(find . -path ./node_modules -prune -o -type d -iname "examples" -exec find {} -iname "*.py" \; -quit 2>/dev/null)
+          fi
           if [ -n "$example_file" ]; then
             PYTHONPATH=. python "$example_file" > results/last_run_output.txt 2>&1 || echo "(example run failed — see log above)" >> results/last_run_output.txt
           else
@@ -817,7 +820,7 @@ function pickUnusedTechnique(pool){
 const FORMAT_VARIANTS = [
   {
     name: "CLI tool",
-    spec: `Structure as a command-line tool. Layout: cli.py (argparse entrypoint) at root, core/ for logic modules, tests/, examples/ with shell-style usage snippets. README tone: terse, usage-first, like a Unix manpage. Architecture diagram shows CLI arg flow into pipeline stages.`
+    spec: `Structure as a command-line tool. Layout: cli.py (argparse entrypoint) at root, core/ for logic modules, tests/, examples/ containing a Python file (e.g. examples/run_example.py, NOT a .sh script) that demonstrates usage by calling the CLI's functions directly or invoking it via subprocess. README tone: terse, usage-first, like a Unix manpage. Architecture diagram shows CLI arg flow into pipeline stages.`
   },
   {
     name: "Library package",
