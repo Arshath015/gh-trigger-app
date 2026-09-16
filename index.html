@@ -924,7 +924,7 @@ Requirements (be concise but real — no filler, no stubs, no "pass # TODO"):
 4. At least 1 markdown file with a short, specific, concrete narrative or analysis (not generic) — written like an internal doc, not marketing copy. Its exact name/location depends on the PROJECT FORMAT (e.g. a case study, a research log entry, or a benchmark report — follow the format spec).
 5. README.md MUST include every one of these sections, in order, none skipped: (a) title + exactly 2 shields.io badge markdown lines, (b) one-line pitch, (c) a Table of Contents with markdown anchor links, (d) ## Overview, (e) ## Tech Stack, (f) ## Architecture with an ASCII diagram in a \`\`\`text fence (never Mermaid) matching the PROJECT FORMAT's actual structure, (g) ## Theoretical Background — real technical depth, 2-3 paragraphs, (h) ## Installation showing \`pip install -r requirements.txt\` + \`git clone\` of THIS repo — never invent a fake published PyPI package, (i) ## Usage — one worked example matching actual file paths in this project, (j) ## API Reference — real public classes/functions with actual parameter names, (k) a section linking to the markdown doc from requirement 4, (l) ## Testing, (m) ## Limitations, (n) ## Roadmap, (o) ## License (MIT). The README's overall TONE should match the PROJECT FORMAT spec (e.g. terse CLI manpage vs research-log vs benchmark-report style).
 6. CRITICAL FORMATTING RULE: never output raw unicode escape sequences as literal text. Use plain ASCII: "<=" and ">=" instead of mathematical symbols.
-7. Only stdlib or common packages (numpy, opencv-python, pillow, requests, pydantic, matplotlib).
+7. Only stdlib or common packages (numpy, opencv-python, pillow, requests, pydantic, matplotlib, PyYAML). CRITICAL: every third-party package actually imported anywhere in the code MUST have a matching line in requirements.txt — this is checked by real CI, missing entries will fail the build.
 8. repoName: lowercase kebab-case, specific to the technique, never generic ("ai-tool" etc). Do not reuse folder-naming conventions from a generic src/tests/examples template unless the PROJECT FORMAT specifies that.
 9. Where it genuinely fits (e.g. API Reference or a benchmark/comparison section) — not forced everywhere — include at least one real markdown table with actual data/parameters.
 9b. requirements.txt MUST always be placed at the repository root (key exactly "requirements.txt", never nested in a subfolder), regardless of the PROJECT FORMAT's other folder conventions.
@@ -998,6 +998,12 @@ Requirements (be concise but real — no filler, no stubs, no "pass # TODO"):
       .replace(/\\u2013/g, '-')
       .replace(/\\u2014/g, '--');
     project.files[path] = cleaned;
+  }
+  // Safety net: if the model forgot requirements.txt entirely (seen occasionally),
+  // add a harmless empty one so the CI workflow never fails to even find it.
+  const hasRequirements = Object.keys(project.files).some(k => k.toLowerCase() === 'requirements.txt');
+  if(!hasRequirements){
+    project.files['requirements.txt'] = '# No external dependencies specified\n';
   }
   const cleanName = project.repoName.toLowerCase().replace(/[^a-z0-9-]/g,'-').replace(/^-+|-+$/g,'');
   project.repoName = await ensureUniqueRepoName(cleanName);
