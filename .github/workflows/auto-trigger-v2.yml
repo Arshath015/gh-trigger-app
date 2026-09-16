@@ -31,6 +31,9 @@ jobs:
           GH_TOKEN: ${{ secrets.GH_PAT }}
           OFF_DAYS: ${{ vars.OFF_DAYS }}
           OFF_DATES: ${{ vars.OFF_DATES }}
+          FOCUS_MIN_DAYS: ${{ vars.FOCUS_MIN_DAYS }}
+          FOCUS_MAX_DAYS: ${{ vars.FOCUS_MAX_DAYS }}
+          FOCUS_CHANCE: ${{ vars.FOCUS_CHANCE }}
           MIN_HOUR: ${{ vars.MIN_HOUR }}
           MAX_HOUR: ${{ vars.MAX_HOUR }}
           MIN_COMMITS: ${{ vars.MIN_COMMITS }}
