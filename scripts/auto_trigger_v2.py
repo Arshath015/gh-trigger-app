@@ -53,6 +53,8 @@ EXCLUDED_REPOS = {
 }
 
 MIN_HOUR = int(os.environ.get("MIN_HOUR", "9") or 9)
+FOCUS_MIN_DAYS = int(os.environ.get("FOCUS_MIN_DAYS", "3") or 3)
+FOCUS_MAX_DAYS = int(os.environ.get("FOCUS_MAX_DAYS", "4") or 4)
 MAX_HOUR = int(os.environ.get("MAX_HOUR", "22") or 22)
 MIN_COMMITS = int(os.environ.get("MIN_COMMITS", "1") or 1)
 MAX_COMMITS = int(os.environ.get("MAX_COMMITS", "30") or 30)
@@ -121,6 +123,45 @@ def load_or_init_state(dt):
 def save_state(state, sha, path):
     content = json.dumps(state, indent=2)
     result = put_file(SELF_OWNER, SELF_REPO, path, content, f"chore: update daily trigger state ({state['done']}/{state['target']})", sha)
+    return result["content"]["sha"]
+
+
+# ---------- Focus-repo rotation (one repo for 3-4 days at a time) ----------
+FOCUS_PATH = ".trigger-state/focus.json"
+
+
+def _pick_new_focus(dt, repos):
+    days = random.randint(FOCUS_MIN_DAYS, FOCUS_MAX_DAYS)
+    repo = random.choice(repos)
+    return {"repo": repo["name"], "start": dt.strftime("%Y-%m-%d"), "days": days, "fail_runs": 0}
+
+
+def load_or_init_focus(dt, repos):
+    existing = get_file(SELF_OWNER, SELF_REPO, FOCUS_PATH)
+    sha = existing["sha"] if existing else None
+    state = json.loads(existing["content"]) if existing else None
+
+    if state is None:
+        state = _pick_new_focus(dt, repos)
+    else:
+        start = datetime.strptime(state["start"], "%Y-%m-%d")
+        elapsed = (dt.replace(tzinfo=None) - start).days
+        if elapsed >= state.get("days", FOCUS_MIN_DAYS):
+            print(f"Focus period for {state['repo']} complete — rotating.")
+            state = _pick_new_focus(dt, repos)
+        elif state.get("fail_runs", 0) >= 2:
+            print(f"Focus repo {state['repo']} failed repeatedly — rotating early.")
+            state = _pick_new_focus(dt, repos)
+        elif state["repo"] not in {r["name"] for r in repos}:
+            print(f"Focus repo {state['repo']} no longer available — rotating.")
+            state = _pick_new_focus(dt, repos)
+
+    return state, sha
+
+
+def save_focus(state, sha):
+    content = json.dumps(state, indent=2)
+    result = put_file(SELF_OWNER, SELF_REPO, FOCUS_PATH, content, f"chore: update focus repo state ({state['repo']})", sha)
     return result["content"]["sha"]
 
 
@@ -222,13 +263,70 @@ def task_fallback_utility(owner, repo, dt, suffix):
     return path, None, content, "docs: add project note"
 
 
+# ---------- Focus-period: commit to ONE repo for a multi-day stretch, then rotate ----------
+FOCUS_MIN_DAYS = int(os.environ.get("FOCUS_MIN_DAYS", "3") or 3)
+FOCUS_MAX_DAYS = int(os.environ.get("FOCUS_MAX_DAYS", "4") or 4)
+FOCUS_CHANCE = float(os.environ.get("FOCUS_CHANCE", "0.5") or 0.5)
+FOCUS_STATE_PATH = ".trigger-state/focus.json"
+
+
+def load_focus():
+    existing = get_file(SELF_OWNER, SELF_REPO, FOCUS_STATE_PATH)
+    if existing:
+        return json.loads(existing["content"]), existing["sha"]
+    return {}, None
+
+
+def save_focus(data, sha):
+    content = json.dumps(data, indent=2)
+    result = put_file(SELF_OWNER, SELF_REPO, FOCUS_STATE_PATH, content,
+                       "chore: update focus-repo schedule", sha)
+    return result["content"]["sha"]
+
+
+def get_focus_repo(dt, repos):
+    """Returns the repo name to focus all of today's commits on, or None for
+    normal random-repo-per-commit behavior. Starts a new multi-day streak
+    with FOCUS_CHANCE probability once the previous one has ended."""
+    data, sha = load_focus()
+    today = dt.strftime("%Y-%m-%d")
+
+    active = (
+        data.get("repo") and data.get("start_date") and data.get("end_date")
+        and data["start_date"] <= today <= data["end_date"]
+    )
+    if active:
+        print(f"Focus streak active: {data['repo']} ({data['start_date']} to {data['end_date']})")
+        return data["repo"]
+
+    seed_str = today + "-focus-decision-salt"
+    rng = random.Random(seed_str)
+    if repos and rng.random() < FOCUS_CHANCE:
+        chosen = rng.choice(repos)["name"]
+        duration = rng.randint(FOCUS_MIN_DAYS, FOCUS_MAX_DAYS)
+        end_date = (dt + timedelta(days=duration - 1)).strftime("%Y-%m-%d")
+        new_data = {"repo": chosen, "start_date": today, "end_date": end_date}
+        save_focus(new_data, sha)
+        print(f"Starting new focus streak: {chosen} ({today} to {end_date})")
+        return chosen
+
+    if data.get("repo"):
+        save_focus({}, sha)
+    print("No focus streak today — normal random-repo mode.")
+    return None
+
+
 # ---------- Repo-level task attempt ----------
-def attempt_one_commit(repos, dt, run_suffix):
+def attempt_one_commit(repos, dt, run_suffix, forced_repo_name=None):
     """Tries, in random order, to find one applicable additive edit on a
-    randomly chosen repo. Falls back to changelog / dev-note which are
-    always applicable, so this should essentially never come back empty
-    unless the account has zero repos."""
-    repo = random.choice(repos)
+    chosen repo (forced to forced_repo_name if given, else random). Falls
+    back to changelog / dev-note which are always applicable, so this should
+    essentially never come back empty unless the account has zero repos."""
+    repo = None
+    if forced_repo_name:
+        repo = next((r for r in repos if r["name"] == forced_repo_name), None)
+    if repo is None:
+        repo = random.choice(repos)
     owner = repo["owner"]["login"]
     name = repo["name"]
 
@@ -330,11 +428,13 @@ def main():
         print("No repos found on this account.")
         return
 
+    focus_repo = get_focus_repo(dt, repos)
+
     made = 0
     for i in range(this_run):
         try:
             suffix = f"{dt.strftime('%H%M')}{i}"
-            result = attempt_one_commit(repos, dt, suffix)
+            result = attempt_one_commit(repos, dt, suffix, forced_repo_name=focus_repo)
             if result:
                 print(f"Committed: {result}")
                 state["log"].append(result)
