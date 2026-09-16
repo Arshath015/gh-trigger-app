@@ -378,8 +378,26 @@ async function putFile(owner, repo, path, content, message, sha){
   const res = await fetch(`${API}/repos/${owner}/${repo}/contents/${path}`, {
     method: 'PUT', headers: {...authHeaders(), 'Content-Type':'application/json'}, body: JSON.stringify(body)
   });
-  if(!res.ok){ const t = await res.text(); throw new Error("Commit failed: " + t); }
+  if(!res.ok){ const t = await res.text(); throw new Error(`Commit failed for ${path}: ${t}`); }
   return res.json();
+}
+
+// Right after a repo is created, GitHub sometimes needs a moment before it's fully
+// ready to accept file pushes (returns a transient 404). Retry a few times with
+// backoff instead of failing the whole operation on the first attempt.
+async function putFileWithRetry(owner, repo, path, content, message, sha, maxAttempts = 4){
+  for(let attempt = 1; attempt <= maxAttempts; attempt++){
+    try{
+      return await putFile(owner, repo, path, content, message, sha);
+    } catch(e){
+      const is404 = e.message.includes('"status": "404"') || e.message.includes('Not Found');
+      if(is404 && attempt < maxAttempts){
+        await new Promise(r => setTimeout(r, attempt * 2000));
+        continue;
+      }
+      throw e;
+    }
+  }
 }
 
 // ---------- README micro-task templates ----------
@@ -620,10 +638,10 @@ async function createRepoAndFiles(p){
       });
     } catch(e){ /* non-fatal — repo creation still proceeds even if this fails */ }
   }
-  await new Promise(r=>setTimeout(r, 1500));
+  await new Promise(r=>setTimeout(r, 3000));
   for(const [path, content] of Object.entries(filesToWrite)){
     const existing = await getFile(owner, p.repoName, path);
-    await putFile(owner, p.repoName, path, content, commitMessageForPath(path), existing ? existing.sha : null);
+    await putFileWithRetry(owner, p.repoName, path, content, commitMessageForPath(path), existing ? existing.sha : null);
   }
 }
 
