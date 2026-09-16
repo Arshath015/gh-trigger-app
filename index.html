@@ -674,7 +674,7 @@ jobs:
             echo "No requirements.txt found — continuing with stdlib only."
           fi
       - name: Run tests
-        run: pytest -q || echo "TEST_FAILURES=1" >> $GITHUB_ENV
+        run: PYTHONPATH=. pytest -q || echo "TEST_FAILURES=1" >> $GITHUB_ENV
       - name: Run example and capture output
         run: |
           mkdir -p results
@@ -683,7 +683,7 @@ jobs:
             example_file=$(find . -path ./node_modules -prune -o -iname "*.py" -path "*demo*" -print -quit)
           fi
           if [ -n "$example_file" ]; then
-            python "$example_file" > results/last_run_output.txt 2>&1 || echo "(example run failed — see log above)" >> results/last_run_output.txt
+            PYTHONPATH=. python "$example_file" > results/last_run_output.txt 2>&1 || echo "(example run failed — see log above)" >> results/last_run_output.txt
           else
             echo "No example/demo script found." > results/last_run_output.txt
           fi
