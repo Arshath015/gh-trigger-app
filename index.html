@@ -605,12 +605,66 @@ async function createRepoAndFiles(p){
   if(!res.ok){ const t = await res.text(); throw new Error(`Repo creation failed (${res.status}): ${t}`); }
   const repoData = await res.json();
   const owner = repoData.owner.login;
+  const filesToWrite = {...p.files};
+  // AI-generated projects only (marked by _technique): inject a CI workflow that actually
+  // executes tests + the example script and commits the real captured output back,
+  // as proof the code genuinely runs. Preset scaffold projects are untouched.
+  if(p._technique && !Object.keys(filesToWrite).some(k => k.startsWith('.github/workflows/'))){
+    filesToWrite['.github/workflows/verify-and-record.yml'] = VERIFY_WORKFLOW_YML;
+  }
   await new Promise(r=>setTimeout(r, 1500));
-  for(const [path, content] of Object.entries(p.files)){
+  for(const [path, content] of Object.entries(filesToWrite)){
     const existing = await getFile(owner, p.repoName, path);
     await putFile(owner, p.repoName, path, content, commitMessageForPath(path), existing ? existing.sha : null);
   }
 }
+
+const VERIFY_WORKFLOW_YML = `name: Verify and Record Results
+
+on:
+  push:
+    branches: [main]
+  workflow_dispatch: {}
+
+permissions:
+  contents: write
+
+jobs:
+  verify:
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@v4
+      - uses: actions/setup-python@v5
+        with:
+          python-version: '3.11'
+      - name: Install dependencies
+        run: |
+          pip install -r requirements.txt
+          pip install pytest
+      - name: Run tests
+        run: pytest -q || echo "TEST_FAILURES=1" >> $GITHUB_ENV
+      - name: Run example and capture output
+        run: |
+          mkdir -p results
+          example_file=$(find . -path ./node_modules -prune -o -iname "*.py" -path "*example*" -print -quit)
+          if [ -z "$example_file" ]; then
+            example_file=$(find . -path ./node_modules -prune -o -iname "*.py" -path "*demo*" -print -quit)
+          fi
+          if [ -n "$example_file" ]; then
+            python "$example_file" > results/last_run_output.txt 2>&1 || echo "(example run failed — see log above)" >> results/last_run_output.txt
+          else
+            echo "No example/demo script found." > results/last_run_output.txt
+          fi
+          echo "" >> results/last_run_output.txt
+          echo "Recorded: $(date -u +%Y-%m-%dT%H:%M:%SZ)" >> results/last_run_output.txt
+      - name: Commit results
+        run: |
+          git config user.name "github-actions[bot]"
+          git config user.email "github-actions[bot]@users.noreply.github.com"
+          git add results/ || true
+          git diff --staged --quiet || git commit -m "chore: record verified run output"
+          git push || true
+`;
 
 // ---------- AI-generated projects via Groq ----------
 const AI_THEMES = {
@@ -838,9 +892,11 @@ Requirements (be concise but real — no filler, no stubs, no "pass # TODO"):
 4. At least 1 markdown file with a short, specific, concrete narrative or analysis (not generic) — written like an internal doc, not marketing copy. Its exact name/location depends on the PROJECT FORMAT (e.g. a case study, a research log entry, or a benchmark report — follow the format spec).
 5. README.md MUST include every one of these sections, in order, none skipped: (a) title + exactly 2 shields.io badge markdown lines, (b) one-line pitch, (c) a Table of Contents with markdown anchor links, (d) ## Overview, (e) ## Tech Stack, (f) ## Architecture with an ASCII diagram in a \`\`\`text fence (never Mermaid) matching the PROJECT FORMAT's actual structure, (g) ## Theoretical Background — real technical depth, 2-3 paragraphs, (h) ## Installation showing \`pip install -r requirements.txt\` + \`git clone\` of THIS repo — never invent a fake published PyPI package, (i) ## Usage — one worked example matching actual file paths in this project, (j) ## API Reference — real public classes/functions with actual parameter names, (k) a section linking to the markdown doc from requirement 4, (l) ## Testing, (m) ## Limitations, (n) ## Roadmap, (o) ## License (MIT). The README's overall TONE should match the PROJECT FORMAT spec (e.g. terse CLI manpage vs research-log vs benchmark-report style).
 6. CRITICAL FORMATTING RULE: never output raw unicode escape sequences as literal text. Use plain ASCII: "<=" and ">=" instead of mathematical symbols.
-7. Only stdlib or common packages (numpy, opencv-python, pillow, requests, pydantic).
+7. Only stdlib or common packages (numpy, opencv-python, pillow, requests, pydantic, matplotlib).
 8. repoName: lowercase kebab-case, specific to the technique, never generic ("ai-tool" etc). Do not reuse folder-naming conventions from a generic src/tests/examples template unless the PROJECT FORMAT specifies that.
-9. Valid JSON only, newlines escaped properly.`;
+9. Where it genuinely fits (e.g. API Reference or a benchmark/comparison section) — not forced everywhere — include at least one real markdown table with actual data/parameters.
+10. The example/demo file MUST end by writing a real result to disk under a results/ (or format-appropriate) folder: either a short text summary (results/output.txt via a print+write) or, if matplotlib is already relevant to the technique, an actual chart (plt.savefig(...)). This will be executed for real by CI later, so it must run without errors using only what's in requirements.txt.
+11. Valid JSON only, newlines escaped properly.`;
 
   const userPrompt = `Context: ${themeContext}\n\nExact technique to implement (do not change or substitute): ${technique}\n\nPROJECT FORMAT for this build (shape the entire file layout, folder naming, and README tone around this — this is what must differ from any previous project): ${format.spec}\n\nBuild the full submodule now, following every requirement and matching the PROJECT FORMAT exactly. Depth over breadth.`;
 
