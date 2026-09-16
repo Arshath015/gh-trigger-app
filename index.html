@@ -611,6 +611,14 @@ async function createRepoAndFiles(p){
   // as proof the code genuinely runs. Preset scaffold projects are untouched.
   if(p._technique && !Object.keys(filesToWrite).some(k => k.startsWith('.github/workflows/'))){
     filesToWrite['.github/workflows/verify-and-record.yml'] = VERIFY_WORKFLOW_YML;
+    // New repos default to read-only Actions permissions, which would make the workflow's
+    // own commit-back step fail silently. Switch this repo to read-write so it can push.
+    try{
+      await fetch(`${API}/repos/${owner}/${p.repoName}/actions/permissions/workflow`, {
+        method: 'PUT', headers: {...authHeaders(), 'Content-Type':'application/json'},
+        body: JSON.stringify({ default_workflow_permissions: 'write', can_approve_pull_request_reviews: false })
+      });
+    } catch(e){ /* non-fatal — repo creation still proceeds even if this fails */ }
   }
   await new Promise(r=>setTimeout(r, 1500));
   for(const [path, content] of Object.entries(filesToWrite)){
@@ -900,44 +908,55 @@ Requirements (be concise but real — no filler, no stubs, no "pass # TODO"):
 
   const userPrompt = `Context: ${themeContext}\n\nExact technique to implement (do not change or substitute): ${technique}\n\nPROJECT FORMAT for this build (shape the entire file layout, folder naming, and README tone around this — this is what must differ from any previous project): ${format.spec}\n\nBuild the full submodule now, following every requirement and matching the PROJECT FORMAT exactly. Depth over breadth.`;
 
-  let res;
-  try{
-    res = await fetch('https://api.groq.com/openai/v1/chat/completions', {
-      method: 'POST',
-      headers: { 'Authorization': 'Bearer ' + c.groq, 'Content-Type': 'application/json' },
-      body: JSON.stringify({
-        model: 'openai/gpt-oss-120b',
-        messages: [
-          { role: 'system', content: systemPrompt },
-          { role: 'user', content: userPrompt }
-        ],
-        temperature: 0.85,
-        max_tokens: 4500,
-        reasoning_effort: 'low',
-        response_format: { type: 'json_object' }
-      })
-    });
-  } catch(e){
-    throw new Error('Network error reaching Groq. Check your connection and API key.');
-  }
-  if(res.status === 401) throw new Error('401 from Groq — invalid API key. Check Setup.');
-  if(res.status === 413) throw new Error('413 — this request is too large for your Groq plan\'s per-minute token limit. Wait ~60 seconds and try again; if it keeps happening, your Groq account tier has a lower cap than this app is requesting.');
-  if(res.status === 429) throw new Error('429 — Groq rate limit hit. Wait about a minute and try again.');
-  if(!res.ok){ const t = await res.text(); throw new Error(`Groq API error ${res.status}: ${t.slice(0,200)}`); }
-
-  const data = await res.json();
-  const finishReason = data.choices[0].finish_reason;
-  const raw = data.choices[0].message.content;
   let project;
-  try{
-    project = JSON.parse(raw);
-  } catch(e){
-    if(finishReason === 'length') throw new Error('Groq response was cut off before completing (too large). Try again — it usually succeeds on a retry.');
-    throw new Error('Groq returned invalid JSON. Try again.');
+  let lastErr;
+  for(let attempt = 1; attempt <= 2; attempt++){
+    let res;
+    try{
+      res = await fetch('https://api.groq.com/openai/v1/chat/completions', {
+        method: 'POST',
+        headers: { 'Authorization': 'Bearer ' + c.groq, 'Content-Type': 'application/json' },
+        body: JSON.stringify({
+          model: 'openai/gpt-oss-120b',
+          messages: [
+            { role: 'system', content: systemPrompt },
+            { role: 'user', content: userPrompt }
+          ],
+          temperature: 0.85,
+          max_tokens: 4500,
+          reasoning_effort: 'low',
+          response_format: { type: 'json_object' }
+        })
+      });
+    } catch(e){
+      lastErr = new Error('Network error reaching Groq. Check your connection and API key.');
+      continue;
+    }
+    if(res.status === 401) throw new Error('401 from Groq — invalid API key. Check Setup.');
+    if(res.status === 413){ lastErr = new Error('413 — request too large for your Groq plan\'s per-minute token limit. Wait ~60 seconds and try again.'); continue; }
+    if(res.status === 429){ lastErr = new Error('429 — Groq rate limit hit. Wait about a minute and try again.'); continue; }
+    if(res.status === 400){ lastErr = new Error('Groq could not generate valid JSON this attempt.'); continue; }
+    if(!res.ok){ lastErr = new Error(`Groq API error ${res.status}: ${(await res.text()).slice(0,200)}`); continue; }
+
+    const data = await res.json();
+    const finishReason = data.choices[0].finish_reason;
+    const raw = data.choices[0].message.content;
+    try{
+      project = JSON.parse(raw);
+    } catch(e){
+      lastErr = finishReason === 'length'
+        ? new Error('Groq response was cut off before completing (too large).')
+        : new Error('Groq returned invalid JSON.');
+      continue;
+    }
+    if(!project.repoName || !project.files || Object.keys(project.files).length === 0){
+      lastErr = new Error('Groq response missing required fields.');
+      project = null;
+      continue;
+    }
+    break; // success
   }
-  if(!project.repoName || !project.files || Object.keys(project.files).length === 0){
-    throw new Error('Groq response missing required fields. Try again.');
-  }
+  if(!project) throw new Error(`${lastErr.message} (retried once, still failing — wait a moment and tap Generate again)`);
   // Safety net: strip any mermaid fences the model may have added despite instructions,
   // converting them to plain text fences so GitHub never throws a render error.
   for(const [path, content] of Object.entries(project.files)){
