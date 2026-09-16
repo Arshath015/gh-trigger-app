@@ -665,8 +665,14 @@ jobs:
           python-version: '3.11'
       - name: Install dependencies
         run: |
-          pip install -r requirements.txt
           pip install pytest
+          req_file=$(find . -iname "requirements.txt" -print -quit)
+          if [ -n "$req_file" ]; then
+            echo "Found requirements at: $req_file"
+            pip install -r "$req_file"
+          else
+            echo "No requirements.txt found — continuing with stdlib only."
+          fi
       - name: Run tests
         run: pytest -q || echo "TEST_FAILURES=1" >> $GITHUB_ENV
       - name: Run example and capture output
@@ -921,6 +927,7 @@ Requirements (be concise but real — no filler, no stubs, no "pass # TODO"):
 7. Only stdlib or common packages (numpy, opencv-python, pillow, requests, pydantic, matplotlib).
 8. repoName: lowercase kebab-case, specific to the technique, never generic ("ai-tool" etc). Do not reuse folder-naming conventions from a generic src/tests/examples template unless the PROJECT FORMAT specifies that.
 9. Where it genuinely fits (e.g. API Reference or a benchmark/comparison section) — not forced everywhere — include at least one real markdown table with actual data/parameters.
+9b. requirements.txt MUST always be placed at the repository root (key exactly "requirements.txt", never nested in a subfolder), regardless of the PROJECT FORMAT's other folder conventions.
 10. The example/demo file MUST end by writing a real result to disk under a results/ (or format-appropriate) folder: either a short text summary (results/output.txt via a print+write) or, if matplotlib is already relevant to the technique, an actual chart (plt.savefig(...)). This will be executed for real by CI later, so it must run without errors using only what's in requirements.txt.
 11. Valid JSON only, newlines escaped properly.`;
 
