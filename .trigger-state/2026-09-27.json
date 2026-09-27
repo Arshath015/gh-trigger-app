@@ -1,8 +1,11 @@
 {
   "date": "2026-09-27",
   "target": 20,
-  "done": 1,
+  "done": 4,
   "log": [
-    "altossa: docs: add project note"
+    "altossa: docs: add project note",
+    "altossa: docs: add project note",
+    "altossa: docs: add project note",
+    "altossa: docs: update changelog"
   ]
 }
