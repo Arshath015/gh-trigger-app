@@ -1,9 +1,12 @@
 {
   "date": "2026-10-02",
   "target": 8,
-  "done": 2,
+  "done": 5,
   "log": [
     "newton-raphson-root-finder: chore: update maintenance timestamp",
-    "newton-raphson-root-finder: docs: update changelog"
+    "newton-raphson-root-finder: docs: update changelog",
+    "newton-raphson-root-finder: docs: add project note",
+    "newton-raphson-root-finder: docs: add project note",
+    "newton-raphson-root-finder: docs: add project note"
   ]
 }
