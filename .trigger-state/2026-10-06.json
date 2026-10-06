@@ -1,9 +1,14 @@
 {
   "date": "2026-10-06",
   "target": 22,
-  "done": 2,
+  "done": 7,
   "log": [
     "qr-gramschmidt: docs: document installation requirements",
-    "qr-gramschmidt: docs: add changelog"
+    "qr-gramschmidt: docs: add changelog",
+    "qr-gramschmidt: chore: standardize .gitignore for project tooling",
+    "qr-gramschmidt: chore: add maintenance timestamp footer",
+    "qr-gramschmidt: docs: add project note",
+    "qr-gramschmidt: docs: add project note",
+    "qr-gramschmidt: docs: add project note"
   ]
 }
