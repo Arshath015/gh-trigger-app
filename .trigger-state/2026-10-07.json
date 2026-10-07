@@ -1,10 +1,12 @@
 {
   "date": "2026-10-07",
   "target": 12,
-  "done": 3,
+  "done": 5,
   "log": [
     "qr-gramschmidt: chore: update maintenance timestamp",
     "qr-gramschmidt: docs: add project note",
-    "qr-gramschmidt: docs: update changelog"
+    "qr-gramschmidt: docs: update changelog",
+    "qr-gramschmidt: docs: add project note",
+    "qr-gramschmidt: docs: add project note"
   ]
 }
