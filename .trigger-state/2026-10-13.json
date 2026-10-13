@@ -1,0 +1,9 @@
+{
+  "date": "2026-10-13",
+  "target": 20,
+  "done": 2,
+  "log": [
+    "configurable-inversion-counter: docs: document installation requirements",
+    "configurable-inversion-counter: docs: add changelog"
+  ]
+}
