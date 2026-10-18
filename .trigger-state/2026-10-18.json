@@ -1,8 +1,10 @@
 {
   "date": "2026-10-18",
   "target": 12,
-  "done": 1,
+  "done": 3,
   "log": [
-    "skeleton-furniture-oz95: docs: add project note"
+    "skeleton-furniture-oz95: docs: add project note",
+    "skeleton-furniture-oz95: docs: add project note",
+    "skeleton-furniture-oz95: docs: update changelog"
   ]
 }
