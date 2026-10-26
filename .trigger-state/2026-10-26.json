@@ -1,9 +1,11 @@
 {
   "date": "2026-10-26",
   "target": 25,
-  "done": 2,
+  "done": 4,
   "log": [
     "Emotional-Intelligence-Project: docs: add project note",
+    "Emotional-Intelligence-Project: docs: add project note",
+    "Emotional-Intelligence-Project: docs: update changelog",
     "Emotional-Intelligence-Project: docs: add project note"
   ]
 }
