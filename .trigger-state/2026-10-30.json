@@ -1,8 +1,11 @@
 {
   "date": "2026-10-30",
   "target": 12,
-  "done": 1,
+  "done": 4,
   "log": [
-    "simplex-method: docs: update changelog"
+    "simplex-method: docs: update changelog",
+    "simplex-pipeline: docs: add project note",
+    "monte-carlo-service: chore: standardize .gitignore for project tooling",
+    "Aiera-Cad: docs: update changelog"
   ]
 }
