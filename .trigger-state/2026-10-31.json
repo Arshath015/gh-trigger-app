@@ -1,0 +1,9 @@
+{
+  "date": "2026-10-31",
+  "target": 7,
+  "done": 2,
+  "log": [
+    "simplex-method: docs: add project note",
+    "simplex-method: chore: update maintenance timestamp"
+  ]
+}
