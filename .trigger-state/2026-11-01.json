@@ -1,9 +1,24 @@
 {
   "date": "2026-11-01",
   "target": 21,
-  "done": 2,
+  "done": 17,
   "log": [
     "simplex-method: docs: update changelog",
-    "simplex-method: chore: update maintenance timestamp"
+    "simplex-method: chore: update maintenance timestamp",
+    "simplex-method: docs: add project note",
+    "simplex-method: docs: add project note",
+    "simplex-method: docs: add project note",
+    "simplex-method: docs: add project note",
+    "simplex-method: docs: add project note",
+    "simplex-method: docs: add project note",
+    "simplex-method: docs: add project note",
+    "simplex-method: docs: add project note",
+    "simplex-method: docs: add project note",
+    "simplex-method: docs: add project note",
+    "simplex-method: docs: add project note",
+    "simplex-method: docs: add project note",
+    "simplex-method: docs: add project note",
+    "simplex-method: docs: add project note",
+    "simplex-method: docs: add project note"
   ]
 }
