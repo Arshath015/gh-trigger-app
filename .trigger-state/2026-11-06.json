@@ -1,0 +1,10 @@
+{
+  "date": "2026-11-06",
+  "target": 30,
+  "done": 3,
+  "log": [
+    "simplex-pipeline: docs: document installation requirements",
+    "simplex-pipeline: docs: add project note",
+    "simplex-pipeline: docs: add changelog"
+  ]
+}
