@@ -1,0 +1,9 @@
+{
+  "date": "2026-11-07",
+  "target": 8,
+  "done": 2,
+  "log": [
+    "simplex-pipeline: docs: update changelog",
+    "simplex-pipeline: chore: add maintenance timestamp footer"
+  ]
+}
