@@ -1,9 +1,15 @@
 {
   "date": "2026-11-07",
   "target": 8,
-  "done": 2,
+  "done": 8,
   "log": [
     "simplex-pipeline: docs: update changelog",
-    "simplex-pipeline: chore: add maintenance timestamp footer"
+    "simplex-pipeline: chore: add maintenance timestamp footer",
+    "simplex-pipeline: docs: add project note",
+    "simplex-pipeline: chore: extend .gitignore with standard exclusions",
+    "simplex-pipeline: docs: add project note",
+    "simplex-pipeline: docs: add project note",
+    "simplex-pipeline: docs: add project note",
+    "simplex-pipeline: docs: add project note"
   ]
 }
