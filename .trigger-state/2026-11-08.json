@@ -1,0 +1,9 @@
+{
+  "date": "2026-11-08",
+  "target": 22,
+  "done": 2,
+  "log": [
+    "simplex-pipeline: docs: add project note",
+    "simplex-pipeline: docs: update changelog"
+  ]
+}
